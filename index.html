@@ -26,14 +26,12 @@ body{
     scroll-snap-type:y mandatory;
     scroll-behavior:smooth;
 
-    /* smoother mobile feel */
     overscroll-behavior-y:none;
 }
 
 /* EACH REEL */
 .reel{
     position:relative;
-
     height:100vh;
     width:100%;
 
@@ -78,22 +76,14 @@ body{
     animation:none;
 }
 
-/* cinematic zoom */
 @keyframes slowZoom{
-
-    from{
-        transform:scale(1.1);
-    }
-
-    to{
-        transform:scale(1.2);
-    }
+    from{ transform:scale(1.1); }
+    to{ transform:scale(1.2); }
 }
 
-/* dark overlay */
+/* overlay */
 .reel::after{
     content:'';
-
     position:absolute;
 
     top:0;
@@ -114,7 +104,6 @@ body{
 /* TEXT */
 .content{
     color:white;
-
     text-align:center;
 
     padding:25px;
@@ -129,6 +118,12 @@ body{
     animation:fadeUp 1.2s ease;
 }
 
+/* 🔥 FIX: first reel hidden until video starts */
+.first-content{
+    opacity:0;
+    transform:translateY(30px);
+}
+
 .content h1{
     font-size:3.8rem;
     margin-bottom:15px;
@@ -140,14 +135,11 @@ body{
     line-height:1.7;
 }
 
-/* fade animation */
 @keyframes fadeUp{
-
     from{
         opacity:0;
         transform:translateY(30px);
     }
-
     to{
         opacity:1;
         transform:translateY(0);
@@ -158,19 +150,15 @@ body{
 .end-content{
     display:flex;
     flex-direction:column;
-
     align-items:center;
     justify-content:center;
-
     gap:14px;
 }
 
 .end-content h1{
     font-size:3.4rem;
     font-weight:600;
-
     letter-spacing:0.6px;
-
     margin-bottom:6px;
 }
 
@@ -179,12 +167,6 @@ body{
     opacity:0.92;
 }
 
-.end-content .small{
-    font-size:1.05rem;
-    opacity:0.65;
-}
-
-/* darker ending */
 .reel:last-child::after{
     background:rgba(0,0,0,0.78);
 }
@@ -192,25 +174,11 @@ body{
 /* MOBILE */
 @media(max-width:768px){
 
-    .content h1{
-        font-size:2.6rem;
-    }
+    .content h1{ font-size:2.6rem; }
+    .content p{ font-size:1.2rem; }
 
-    .content p{
-        font-size:1.2rem;
-    }
-
-    .end-content h1{
-        font-size:2.4rem;
-    }
-
-    .end-content .subtext{
-        font-size:1.3rem;
-    }
-
-    .end-content .small{
-        font-size:1rem;
-    }
+    .end-content h1{ font-size:2.4rem; }
+    .end-content .subtext{ font-size:1.3rem; }
 }
 
 </style>
@@ -221,16 +189,14 @@ body{
 <!-- REEL 1 -->
 <div class="reel">
 
-    <video id="firstVideo" autoplay muted playsinline preload="auto">
+    <video id="firstVideo" muted playsinline preload="auto">
         <source src="Memory1.mp4" type="video/mp4">
     </video>
 
-    <div class="content">
+    <div class="content first-content">
 
         <h1>I'm Sorry</h1>
-
         <p>I know I hurt you.</p>
-
         <p>And I regret it deeply.</p>
 
     </div>
@@ -239,68 +205,38 @@ body{
 
 <!-- REEL 2 -->
 <div class="reel">
-
-    <img src="1.jpeg" alt="">
-
-    <div class="content">
-        <p>Every picture reminds me of you.</p>
-    </div>
-
+    <img src="1.jpeg">
+    <div class="content"><p>Every picture reminds me of you.</p></div>
 </div>
 
 <!-- REEL 3 -->
 <div class="reel fit">
-
-    <img src="2.jpeg" alt="">
-
-    <div class="content">
-        <p>I wish I handled things better.</p>
-    </div>
-
+    <img src="2.jpeg">
+    <div class="content"><p>I wish I handled things better.</p></div>
 </div>
 
 <!-- REEL 4 -->
 <div class="reel">
-
-    <img src="3.jpeg" alt="">
-
-    <div class="content">
-        <p>I never wanted to hurt you.</p>
-    </div>
-
+    <img src="3.jpeg">
+    <div class="content"><p>I never wanted to hurt you.</p></div>
 </div>
 
 <!-- REEL 5 -->
 <div class="reel">
-
-    <img src="4.jpeg" alt="">
-
-    <div class="content">
-        <p>Every moment still stays with me.</p>
-    </div>
-
+    <img src="4.jpeg">
+    <div class="content"><p>Every moment still stays with me.</p></div>
 </div>
 
 <!-- REEL 6 -->
 <div class="reel">
-
-    <img src="5.jpeg" alt="">
-
-    <div class="content">
-        <p>I miss how things used to be.</p>
-    </div>
-
+    <img src="5.jpeg">
+    <div class="content"><p>I miss how things used to be.</p></div>
 </div>
 
 <!-- REEL 7 -->
 <div class="reel">
-
-    <img src="6.jpeg" alt="">
-
-    <div class="content">
-        <p>I hope you’re doing okay.</p>
-    </div>
-
+    <img src="6.jpeg">
+    <div class="content"><p>I hope you’re doing okay.</p></div>
 </div>
 
 <!-- FINAL REEL -->
@@ -313,8 +249,9 @@ body{
     <div class="content end-content">
 
         <h1>If you ever feel like talking again…</h1>
-
         <p class="subtext">I’ll be here.</p>
+
+    </div>
 
 </div>
 
@@ -327,9 +264,7 @@ let isUserInteracting = false;
 
 /* go to reel */
 function goToReel(index){
-
     const target = reels[index];
-
     window.scrollTo({
         top: target.offsetTop,
         behavior: "smooth"
@@ -338,18 +273,12 @@ function goToReel(index){
 
 /* detect current reel */
 function getCurrentReelIndex(){
-
     let closestIndex = 0;
     let minDistance = Infinity;
 
     reels.forEach((reel, i) => {
-
-        const distance = Math.abs(
-            reel.getBoundingClientRect().top
-        );
-
+        const distance = Math.abs(reel.getBoundingClientRect().top);
         if(distance < minDistance){
-
             minDistance = distance;
             closestIndex = i;
         }
@@ -360,11 +289,9 @@ function getCurrentReelIndex(){
 
 /* next reel */
 function nextReel(){
-
     if(isUserInteracting) return;
 
     currentIndex = getCurrentReelIndex();
-
     currentIndex++;
 
     if(currentIndex >= reels.length){
@@ -374,47 +301,44 @@ function nextReel(){
     goToReel(currentIndex);
 }
 
-/* pause when user touches screen */
+/* pause when user interacts */
 ["touchstart","scroll"].forEach(evt => {
-
     window.addEventListener(evt, () => {
-
         isUserInteracting = true;
 
         clearTimeout(window.resumeTimer);
-
         window.resumeTimer = setTimeout(() => {
-
             isUserInteracting = false;
-
         }, 3000);
-
     }, { passive:true });
-
 });
 
-/* auto reel timing */
+/* auto scroll */
 setTimeout(() => {
-
     setInterval(nextReel, 2600);
-
 }, 1500);
 
-/* first video transition */
+/* 🔥 FIX: sync first video + text */
 const firstVideo = document.getElementById("firstVideo");
+const firstContent = document.querySelector(".first-content");
 
-firstVideo.addEventListener("loadedmetadata", () => {
+firstVideo.addEventListener("canplay", async () => {
+    try {
+        await firstVideo.play();
 
-    firstVideo.play();
+        setTimeout(() => {
+            firstContent.style.transition = "all 1s ease";
+            firstContent.style.opacity = "0.95";
+            firstContent.style.transform = "translateY(0)";
+        }, 300);
 
-    firstVideo.addEventListener("ended", () => {
+    } catch(err) {}
+});
 
-        goToReel(1);
-
-        currentIndex = 1;
-
-    });
-
+/* move after video ends */
+firstVideo.addEventListener("ended", () => {
+    goToReel(1);
+    currentIndex = 1;
 });
 
 </script>
