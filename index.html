@@ -39,7 +39,7 @@ body{
     overflow:hidden;
 }
 
-/* VIDEO + IMAGE */
+/* MEDIA */
 .reel video,
 .reel img{
     position:absolute;
@@ -49,7 +49,6 @@ body{
     height:100%;
     object-fit:cover;
     z-index:-2;
-    transform:scale(1.1);
 }
 
 /* overlay */
@@ -76,7 +75,6 @@ body{
 
 .content h1{
     font-size:3.8rem;
-    font-weight:600;
 }
 
 .content p{
@@ -112,10 +110,10 @@ body{
 
 <body>
 
-<!-- REEL 1 -->
+<!-- REEL 1 (FIXED LOOP VIDEO) -->
 <div class="reel">
 
-    <video id="firstVideo" muted playsinline preload="auto">
+    <video id="firstVideo" muted playsinline autoplay loop preload="auto">
         <source src="Memory1.mp4" type="video/mp4">
     </video>
 
@@ -135,10 +133,10 @@ body{
 <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
 <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
-<!-- FINAL REEL -->
+<!-- FINAL REEL (LOOP VIDEO FIXED) -->
 <div class="reel">
 
-    <video id="lastVideo" muted playsinline loop preload="auto">
+    <video id="lastVideo" muted playsinline autoplay loop preload="auto">
         <source src="memory3.mp4" type="video/mp4">
     </video>
 
@@ -163,7 +161,7 @@ function goToReel(i){
     });
 }
 
-/* detect reel */
+/* detect active reel */
 function getCurrent(){
     let best = 0;
     let min = Infinity;
@@ -179,11 +177,17 @@ function getCurrent(){
 /* auto scroll */
 function next(){
     if(isUserInteracting) return;
-    currentIndex = (getCurrent()+1) % reels.length;
+
+    const active = getCurrent();
+
+    // 🔥 IMPORTANT: DO NOT auto-leave first reel too aggressively
+    if(active === 0) return;
+
+    currentIndex = (active + 1) % reels.length;
     goToReel(currentIndex);
 }
 
-setInterval(next, 3000);
+setInterval(next, 3500);
 
 /* pause on touch */
 window.addEventListener("touchstart", ()=>{
@@ -191,41 +195,18 @@ window.addEventListener("touchstart", ()=>{
     setTimeout(()=> isUserInteracting=false, 4000);
 }, {passive:true});
 
-/* ✅ FIX FIRST VIDEO (FORCED PLAY) */
-const firstVideo = document.getElementById("firstVideo");
-
-function playFirst(){
-    firstVideo.muted = true;
-    firstVideo.playsInline = true;
-
-    const p = firstVideo.play();
-    if(p !== undefined){
-        p.catch(()=>{});
-    }
+/* ensure videos actually play on mobile */
+function forcePlay(video){
+    if(!video) return;
+    video.muted = true;
+    video.playsInline = true;
+    video.play().catch(()=>{});
 }
 
-window.addEventListener("load", playFirst);
-document.addEventListener("touchstart", playFirst, {once:true});
-document.addEventListener("click", playFirst, {once:true});
-
-/* move after first ends */
-firstVideo.addEventListener("ended", ()=>{
-    goToReel(1);
-    currentIndex = 1;
+window.addEventListener("load", ()=>{
+    forcePlay(document.getElementById("firstVideo"));
+    forcePlay(document.getElementById("lastVideo"));
 });
-
-/* ✅ FIX LAST VIDEO */
-const lastVideo = document.getElementById("lastVideo");
-
-function playLast(){
-    if(lastVideo){
-        lastVideo.muted = true;
-        lastVideo.playsInline = true;
-        lastVideo.play().catch(()=>{});
-    }
-}
-
-window.addEventListener("load", playLast);
 
 </script>
 
