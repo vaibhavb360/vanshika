@@ -18,6 +18,7 @@ body{
     background:black;
     overflow-y:scroll;
     scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;
 }
 
 /* EACH REEL */
@@ -128,10 +129,10 @@ body{
 
 <body>
 
-<!-- REEL 1 -->
+<!-- REELS -->
 <div class="reel">
     <video autoplay muted loop playsinline>
-        <source src="vdd.mp4" type="video/mp4">
+        <source src="vdd.mp4">
     </video>
     <div class="content">
         <h1>I'm Sorry</h1>
@@ -140,40 +141,44 @@ body{
     </div>
 </div>
 
-<!-- REEL 2 -->
-<div class="reel">
-    <img src="1.jpeg">
-    <div class="content">
-        <p>Every picture reminds me of you.</p>
-    </div>
-</div>
+<div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
+<div class="reel"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
+<div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
+<div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
+<div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
+<div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
-<!-- REEL 3 -->
-<div class="reel">
-    <img src="2.jpeg">
-    <div class="content">
-        <p>I wish I handled things better.</p>
-    </div>
-</div>
-
-<!-- REEL 4 -->
-<div class="reel">
-    <img src="3.jpeg">
-    <div class="content">
-        <p>I never wanted to hurt you.</p>
-    </div>
-</div>
-
-<!-- REEL 5 -->
 <div class="reel">
     <video autoplay muted loop playsinline>
-        <source src="vdd.mp4" type="video/mp4">
+        <source src="vdd.mp4">
     </video>
     <div class="content">
         <h1>If you ever feel like talking again…</h1>
         <p>I’ll be here.</p>
     </div>
 </div>
+
+<script>
+const reels = document.querySelectorAll(".reel");
+let current = 0;
+
+// AUTO SCROLL FUNCTION (TikTok style)
+function goToNextReel() {
+    current++;
+
+    if (current >= reels.length) {
+        current = 0; // loop back to first reel
+    }
+
+    reels[current].scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+// Change slide every 5 seconds
+setInterval(goToNextReel, 5000);
+</script>
 
 </body>
 </html>
