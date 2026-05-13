@@ -86,10 +86,7 @@ body{
     max-width:90%;
     opacity:0.95;
     letter-spacing:0.5px;
-
-    /* readability instead of box */
     text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-
     animation:fadeUp 1.2s ease;
 }
 
@@ -109,11 +106,6 @@ body{
     background:rgba(0,0,0,0.78);
 }
 
-.reel:last-child .content{
-    transform:scale(1.05);
-    opacity:1;
-}
-
 /* mobile */
 @media(max-width:768px){
     .content h1{
@@ -122,6 +114,51 @@ body{
 
     .content p{
         font-size:1.2rem;
+    }
+}
+
+/* =========================
+   ✨ ENHANCED ENDING SLIDE
+   ========================= */
+
+.end-content{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.end-content h1{
+    font-size: 3.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.end-content .subtext{
+    font-size: 1.8rem;
+    opacity: 0.95;
+}
+
+.end-content .small{
+    font-size: 1.1rem;
+    opacity: 0.7;
+    margin-top: 6px;
+}
+
+/* mobile tuning for ending */
+@media(max-width:768px){
+    .end-content h1{
+        font-size: 2.4rem;
+    }
+
+    .end-content .subtext{
+        font-size: 1.3rem;
+    }
+
+    .end-content .small{
+        font-size: 1rem;
     }
 }
 </style>
@@ -155,14 +192,16 @@ body{
 
 <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
+<!-- FINAL SLIDE (IMPROVED) -->
 <div class="reel">
     <video autoplay muted loop playsinline preload="auto">
         <source src="memory3.mp4">
     </video>
 
-    <div class="content">
+    <div class="content end-content">
         <h1>If you ever feel like talking again…</h1>
-        <p>I’ll be here.</p>
+        <p class="subtext">I’ll be here.</p>
+        <p class="small">No pressure. No expectations.</p>
     </div>
 </div>
 
@@ -172,7 +211,6 @@ const reels = document.querySelectorAll(".reel");
 let currentIndex = 0;
 let isUserInteracting = false;
 
-// smooth scroll to reel
 function goToReel(index) {
     const target = reels[index];
 
@@ -182,7 +220,6 @@ function goToReel(index) {
     });
 }
 
-// detect current reel
 function getCurrentReelIndex() {
     let closestIndex = 0;
     let minDistance = Infinity;
@@ -199,7 +236,6 @@ function getCurrentReelIndex() {
     return closestIndex;
 }
 
-// auto next reel
 function nextReel() {
     if (isUserInteracting) return;
 
@@ -213,7 +249,6 @@ function nextReel() {
     goToReel(currentIndex);
 }
 
-// pause on user interaction (mobile-safe)
 ["touchstart", "scroll"].forEach(evt => {
     window.addEventListener(evt, () => {
         isUserInteracting = true;
@@ -225,12 +260,10 @@ function nextReel() {
     }, { passive: true });
 });
 
-// stable auto scroll timing
 setTimeout(() => {
     setInterval(nextReel, 4500);
 }, 2000);
 
-// first video auto transition
 const firstVideo = document.getElementById("firstVideo");
 
 firstVideo.addEventListener("loadedmetadata", () => {
