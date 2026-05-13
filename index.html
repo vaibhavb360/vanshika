@@ -39,7 +39,7 @@ body{
     overflow:hidden;
 }
 
-/* MEDIA */
+/* CINEMATIC MEDIA */
 .reel video,
 .reel img{
     position:absolute;
@@ -49,9 +49,18 @@ body{
     height:100%;
     object-fit:cover;
     z-index:-2;
+
+    transform:scale(1.1);
+    animation:slowZoom 12s ease-in-out infinite alternate;
 }
 
-/* overlay */
+/* CINEMATIC ZOOM RESTORED */
+@keyframes slowZoom{
+    from{ transform:scale(1.1); }
+    to{ transform:scale(1.2); }
+}
+
+/* OVERLAY RESTORED */
 .reel::after{
     content:'';
     position:absolute;
@@ -75,6 +84,7 @@ body{
 
 .content h1{
     font-size:3.8rem;
+    font-weight:600;
 }
 
 .content p{
@@ -86,17 +96,13 @@ body{
     to{opacity:1; transform:translateY(0);}
 }
 
-/* END */
+/* END SLIDE */
 .end-content{
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     gap:12px;
-}
-
-.end-content h1{
-    font-size:3.2rem;
 }
 
 /* MOBILE */
@@ -110,9 +116,8 @@ body{
 
 <body>
 
-<!-- REEL 1 (FIXED LOOP VIDEO) -->
+<!-- REEL 1 -->
 <div class="reel">
-
     <video id="firstVideo" muted playsinline autoplay loop preload="auto">
         <source src="Memory1.mp4" type="video/mp4">
     </video>
@@ -122,7 +127,6 @@ body{
         <p>I know I hurt you.</p>
         <p>And I regret it deeply.</p>
     </div>
-
 </div>
 
 <!-- REELS -->
@@ -133,7 +137,7 @@ body{
 <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
 <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
-<!-- FINAL REEL (LOOP VIDEO FIXED) -->
+<!-- FINAL REEL -->
 <div class="reel">
 
     <video id="lastVideo" muted playsinline autoplay loop preload="auto">
@@ -144,7 +148,6 @@ body{
         <h1>If you ever feel like talking again…</h1>
         <p>I’ll be here.</p>
     </div>
-
 </div>
 
 <script>
@@ -153,7 +156,7 @@ const reels = document.querySelectorAll(".reel");
 let currentIndex = 0;
 let isUserInteracting = false;
 
-/* scroll */
+/* scroll function */
 function goToReel(i){
     window.scrollTo({
         top: reels[i].offsetTop,
@@ -174,20 +177,21 @@ function getCurrent(){
     return best;
 }
 
-/* auto scroll */
+/* AUTO SCROLL (RESTORED) */
 function next(){
     if(isUserInteracting) return;
 
     const active = getCurrent();
 
-    // 🔥 IMPORTANT: DO NOT auto-leave first reel too aggressively
+    // don't interrupt first reel too early
     if(active === 0) return;
 
     currentIndex = (active + 1) % reels.length;
     goToReel(currentIndex);
 }
 
-setInterval(next, 3500);
+/* timing */
+setInterval(next, 3200);
 
 /* pause on touch */
 window.addEventListener("touchstart", ()=>{
@@ -195,8 +199,8 @@ window.addEventListener("touchstart", ()=>{
     setTimeout(()=> isUserInteracting=false, 4000);
 }, {passive:true});
 
-/* ensure videos actually play on mobile */
-function forcePlay(video){
+/* force video play */
+function play(video){
     if(!video) return;
     video.muted = true;
     video.playsInline = true;
@@ -204,8 +208,8 @@ function forcePlay(video){
 }
 
 window.addEventListener("load", ()=>{
-    forcePlay(document.getElementById("firstVideo"));
-    forcePlay(document.getElementById("lastVideo"));
+    play(document.getElementById("firstVideo"));
+    play(document.getElementById("lastVideo"));
 });
 
 </script>
