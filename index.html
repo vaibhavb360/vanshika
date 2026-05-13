@@ -20,31 +20,33 @@
 body{
     font-family:'Inter', sans-serif;
     background:black;
-    overflow-y:scroll;
-    scroll-snap-type:y mandatory;
-    scroll-behavior:smooth;
-    overscroll-behavior-y:none;
-    -webkit-overflow-scrolling: touch;
+    overflow:hidden; /* IMPORTANT: disable scroll */
+}
+
+/* VIEWPORT */
+.wrapper{
+    position:relative;
+    height:100vh;
+    width:100vw;
+    overflow:hidden;
+}
+
+/* SLIDER TRACK */
+.track{
+    height:100%;
+    width:100%;
+    transition: transform 0.9s ease;
 }
 
 /* REELS */
 .reel{
-    position:relative;
     height:100vh;
-    width:100%;
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
+    width:100vw;
+    position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
     overflow:hidden;
-
-    opacity:0;
-    transition: opacity 0.8s ease;
-}
-
-.reel-active{
-    opacity:1;
 }
 
 /* MEDIA */
@@ -57,7 +59,6 @@ body{
     height:100%;
     object-fit:cover;
     z-index:-2;
-
     transform:scale(1.1);
     animation:slowZoom 12s ease-in-out infinite alternate;
 }
@@ -71,10 +72,7 @@ body{
 .reel::after{
     content:'';
     position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     background: radial-gradient(circle, rgba(0,0,0,0.2), rgba(0,0,0,0.75));
     z-index:-1;
 }
@@ -84,23 +82,15 @@ body{
     color:white;
     text-align:center;
     padding:25px;
-    max-width:90%;
     text-shadow:0 2px 12px rgba(0,0,0,0.8);
-    animation:fadeUp 1s ease;
 }
 
 .content h1{
-    font-size:3.8rem;
-    font-weight:600;
+    font-size:3rem;
 }
 
 .content p{
-    font-size:1.5rem;
-}
-
-@keyframes fadeUp{
-    from{opacity:0; transform:translateY(30px);}
-    to{opacity:1; transform:translateY(0);}
+    font-size:1.4rem;
 }
 
 .end-content{
@@ -112,8 +102,8 @@ body{
 }
 
 @media(max-width:768px){
-    .content h1{font-size:2.6rem;}
-    .content p{font-size:1.2rem;}
+    .content h1{font-size:2.4rem;}
+    .content p{font-size:1.1rem;}
 }
 
 </style>
@@ -121,116 +111,79 @@ body{
 
 <body>
 
-<!-- REELS -->
-<div class="reel reel-active">
-    <video id="firstVideo" muted playsinline autoplay loop preload="auto">
-        <source src="Memory1.mp4" type="video/mp4">
-    </video>
+<div class="wrapper">
+    <div class="track" id="track">
 
-    <div class="content">
-        <h1>I'm Sorry</h1>
-        <p>I know I hurt you.</p>
-        <p>And I regret it deeply.</p>
-    </div>
-</div>
+        <div class="reel">
+            <video id="firstVideo" muted playsinline autoplay loop>
+                <source src="Memory1.mp4">
+            </video>
+            <div class="content">
+                <h1>I'm Sorry</h1>
+                <p>I know I hurt you.</p>
+            </div>
+        </div>
 
-<div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
-<div class="reel"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
-<div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
-<div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
-<div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
-<div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
+        <div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
+        <div class="reel"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
+        <div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
+        <div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
+        <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
+        <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
-<div class="reel">
-    <video id="lastVideo" muted playsinline autoplay loop preload="auto">
-        <source src="memory3.mp4" type="video/mp4">
-    </video>
+        <div class="reel">
+            <video id="lastVideo" muted playsinline autoplay loop>
+                <source src="memory3.mp4">
+            </video>
 
-    <div class="content end-content">
-        <h1>If you ever feel like talking again…</h1>
-        <p>I’ll be here.</p>
+            <div class="content end-content">
+                <h1>If you ever feel like talking again…</h1>
+                <p>I’ll be here.</p>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script>
 
+const track = document.getElementById("track");
 const reels = document.querySelectorAll(".reel");
 
-let currentIndex = 0;
-let isLocked = false;
+let index = 0;
+let locked = false;
 
-/* active UI */
-function setActive(i){
-    reels.forEach(r => r.classList.remove("reel-active"));
-    reels[i].classList.add("reel-active");
-}
-
-/* RELIABLE MOBILE SCROLL */
-function goToReel(i){
+/* MOVE SLIDE (THIS IS THE KEY FIX) */
+function goTo(i){
     if(i < 0 || i >= reels.length) return;
 
-    currentIndex = i;
-    setActive(i);
+    index = i;
+    locked = true;
 
-    const top = reels[i].offsetTop;
-
-    isLocked = true;
-
-    window.scrollTo({
-        top: top,
-        behavior: "smooth"
-    });
+    track.style.transform = `translateY(-${i * 100}vh)`;
 
     setTimeout(() => {
-        isLocked = false;
+        locked = false;
     }, 900);
 }
 
-/* AUTO SCROLL ENGINE */
-function nextSlide(){
-    if(isLocked) return;
+/* AUTO SCROLL (NOW 100% RELIABLE) */
+function next(){
+    if(locked) return;
+    if(index >= reels.length - 1) return;
 
-    if(currentIndex >= reels.length - 1){
-        return;
-    }
-
-    goToReel(currentIndex + 1);
+    goTo(index + 1);
 }
 
-/* start auto scroll */
-setInterval(nextSlide, 3500);
+setInterval(next, 3500);
 
-/* sync manual scroll */
-window.addEventListener("scroll", () => {
-
-    let closest = 0;
-    let minDist = Infinity;
-
-    reels.forEach((r, i) => {
-        const dist = Math.abs(r.getBoundingClientRect().top);
-        if(dist < minDist){
-            minDist = dist;
-            closest = i;
-        }
-    });
-
-    currentIndex = closest;
-    setActive(currentIndex);
-
-}, { passive: true });
-
-/* pause on touch */
+/* TOUCH PAUSE */
 window.addEventListener("touchstart", () => {
+    locked = true;
+    setTimeout(() => locked = false, 4000);
+}, { passive:true });
 
-    isLocked = true;
-
-    setTimeout(() => {
-        isLocked = false;
-    }, 4000);
-
-}, { passive: true });
-
-/* autoplay videos */
+/* autoplay fix */
 window.addEventListener("load", async () => {
 
     const v1 = document.getElementById("firstVideo");
@@ -239,16 +192,9 @@ window.addEventListener("load", async () => {
     try {
         await v1.play();
         await v2.play();
-    } catch (e) {
-        console.log("Autoplay blocked:", e);
-    }
+    } catch(e){}
 
-    setActive(0);
-
-    setTimeout(() => {
-        goToReel(0);
-    }, 600);
-
+    goTo(0);
 });
 
 </script>
