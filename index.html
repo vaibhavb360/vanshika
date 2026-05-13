@@ -48,7 +48,7 @@ body{
     overflow:hidden;
 }
 
-/* MEDIA (FIXED FIT) */
+/* MEDIA */
 .reel img,
 .reel video{
     position:absolute;
@@ -56,19 +56,15 @@ body{
     left:0;
     width:100%;
     height:100%;
-
-    /* FIX: better framing */
-    object-fit: cover;
-    object-position: center;
-
+    object-fit:cover;
+    object-position:center;
     z-index:-2;
     transform:scale(1.05);
 }
 
-/* Special better framing for 2nd & 3rd images */
-.reel:nth-child(2) img,
-.reel:nth-child(3) img{
-    object-fit: contain;
+/* Optional better fit images */
+.reel img.fit-contain{
+    object-fit:contain;
     background:black;
 }
 
@@ -130,8 +126,8 @@ body{
         </div>
 
         <div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
-        <div class="reel"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
-        <div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
+        <div class="reel"><img class="fit-contain" src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
+        <div class="reel"><img class="fit-contain" src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
         <div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
         <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
         <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
@@ -158,23 +154,19 @@ const reels = document.querySelectorAll(".reel");
 let index = 0;
 let locked = false;
 
-/* MOVE SLIDE */
+/* ✅ FIXED NAVIGATION LOGIC */
 function go(i){
-    if(i < 0) i = 0;
 
-    if(i >= reels.length){
-        // instead of freezing, allow restart
-        i = reels.length - 1;
-    }
+    // clamp safely (no broken state)
+    index = Math.max(0, Math.min(i, reels.length - 1));
 
-    index = i;
     locked = true;
 
-    track.style.transform = `translateY(-${i * 100}vh)`;
+    track.style.transform = `translateY(-${index * 100}vh)`;
 
     setTimeout(() => {
         locked = false;
-    }, 900);
+    }, 800);
 }
 
 /* AUTO SCROLL */
@@ -186,10 +178,9 @@ function next(){
     }
 }
 
-/* AUTO TIMER */
 setInterval(next, 3500);
 
-/* SWIPE BACK + FORWARD */
+/* SWIPE */
 let startX = 0;
 
 window.addEventListener("touchstart", (e) => {
@@ -197,28 +188,27 @@ window.addEventListener("touchstart", (e) => {
 });
 
 window.addEventListener("touchend", (e) => {
+
     let diff = e.changedTouches[0].clientX - startX;
 
     if(Math.abs(diff) < 40) return;
 
     if(diff > 0){
-        go(index - 1); // BACK
+        go(index - 1);
     } else {
-        go(index + 1); // FORWARD
+        go(index + 1);
     }
 });
 
-/* TAP TO RESTART AFTER END */
+/* RESTART ON END */
 window.addEventListener("click", () => {
     if(index === reels.length - 1){
         go(0);
     }
 });
 
-/* START */
-window.onload = () => {
-    go(0);
-};
+/* INIT */
+window.onload = () => go(0);
 
 </script>
 
