@@ -48,6 +48,14 @@ body{
     animation:slowZoom 12s ease-in-out infinite alternate;
 }
 
+/* ✅ FIX: only 2.jpeg should NOT zoom/crop */
+.reel.fit img{
+    object-fit:contain;
+    background:black;
+    transform:none;
+    animation:none;
+}
+
 /* zoom animation */
 @keyframes slowZoom{
     from{ transform:scale(1.1); }
@@ -74,10 +82,15 @@ body{
 .content{
     color:white;
     text-align:center;
-    padding:20px;
+    padding:25px;
     max-width:90%;
-    opacity:0.9;
+    opacity:0.95;
     letter-spacing:0.5px;
+
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+
     animation:fadeUp 1.2s ease;
 }
 
@@ -92,7 +105,6 @@ body{
     line-height: 1.8;
 }
 
-/* entry animation */
 @keyframes fadeUp{
     from{
         opacity:0;
@@ -130,9 +142,10 @@ body{
 <body>
 
 <!-- REELS -->
+
 <div class="reel">
-    <video autoplay muted loop playsinline>
-        <source src="vdd.mp4">
+    <video autoplay muted loop playsinline preload="auto">
+        <source src="memory1.mp4">
     </video>
     <div class="content">
         <h1>I'm Sorry</h1>
@@ -141,16 +154,52 @@ body{
     </div>
 </div>
 
-<div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
-<div class="reel"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
-<div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
-<div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
-<div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
-<div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
+<div class="reel">
+    <img src="1.jpeg" alt="">
+    <div class="content">
+        <p>Every picture reminds me of you.</p>
+    </div>
+</div>
+
+<!-- ✅ FIXED FIT SLIDE -->
+<div class="reel fit">
+    <img src="2.jpeg" alt="">
+    <div class="content">
+        <p>I wish I handled things better.</p>
+    </div>
+</div>
 
 <div class="reel">
-    <video autoplay muted loop playsinline>
-        <source src="vdd.mp4">
+    <img src="3.jpeg" alt="">
+    <div class="content">
+        <p>I never wanted to hurt you.</p>
+    </div>
+</div>
+
+<div class="reel">
+    <img src="4.jpeg" alt="">
+    <div class="content">
+        <p>Every moment still stays with me.</p>
+    </div>
+</div>
+
+<div class="reel">
+    <img src="5.jpeg" alt="">
+    <div class="content">
+        <p>I miss how things used to be.</p>
+    </div>
+</div>
+
+<div class="reel">
+    <img src="6.jpeg" alt="">
+    <div class="content">
+        <p>I hope you’re doing okay.</p>
+    </div>
+</div>
+
+<div class="reel">
+    <video autoplay muted loop playsinline preload="auto">
+        <source src="memory3.mp4">
     </video>
     <div class="content">
         <h1>If you ever feel like talking again…</h1>
@@ -160,23 +209,38 @@ body{
 
 <script>
 const reels = document.querySelectorAll(".reel");
-let current = 0;
 
-// AUTO SCROLL FUNCTION (TikTok style)
+let paused = false;
+
+window.addEventListener("wheel", () => paused = true);
+window.addEventListener("touchstart", () => paused = true);
+window.addEventListener("keydown", () => paused = true);
+
+function getCurrentReelIndex() {
+    let index = 0;
+
+    reels.forEach((reel, i) => {
+        const rect = reel.getBoundingClientRect();
+        if (rect.top >= -10 && rect.top <= 10) {
+            index = i;
+        }
+    });
+
+    return index;
+}
+
 function goToNextReel() {
-    current++;
+    if (paused) return;
 
-    if (current >= reels.length) {
-        current = 0; // loop back to first reel
-    }
+    const current = getCurrentReelIndex();
+    const next = (current + 1) % reels.length;
 
-    reels[current].scrollIntoView({
+    reels[next].scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 }
 
-// Change slide every 5 seconds
 setInterval(goToNextReel, 5000);
 </script>
 
