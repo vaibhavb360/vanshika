@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>I'm Sorry Vanshu</title>
@@ -15,7 +15,7 @@
 body{
     height:100vh;
     overflow:hidden;
-    font-family:Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Background video */
@@ -56,8 +56,9 @@ body::after{
     width:100%;
     height:100%;
     object-fit:cover;
-    opacity:0.35;
-    border:2px solid rgba(255,255,255,0.1);
+    opacity:0.18;
+    filter:contrast(1.2) brightness(0.7) saturate(0.9);
+    border:1px solid rgba(255,255,255,0.08);
 }
 
 /* Front text */
@@ -72,16 +73,23 @@ body::after{
 }
 
 .overlay h1{
-    font-size:3rem;
+    font-size:3.4rem;
+    font-weight:600;
+    letter-spacing:1px;
     margin-bottom:20px;
+    text-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-.overlay p{
+    .overlay p{
     font-size:1.2rem;
     line-height:1.8;
-    background:rgba(0,0,0,0.5);
-    padding:20px;
-    border-radius:20px;
+    padding:22px;
+    border-radius:18px;
+
+    background:rgba(0,0,0,0.35);
+    backdrop-filter: blur(10px);
+
+    border:1px solid rgba(255,255,255,0.08);
 }
 
 button{
@@ -101,9 +109,12 @@ button:hover{
 
 .hidden-message{
     margin-top:20px;
-    display:none;
     font-size:1.1rem;
     color:#ffdede;
+
+    opacity:0;
+    transform:translateY(10px);
+    transition:all 2s ease-in-out;
 }
 
 @media(max-width:768px){
@@ -120,7 +131,7 @@ button:hover{
 
 <body>
     <video autoplay muted loop playsinline class="bg-video">
-    <source src="memory.mp4" type="video/mp4">
+    <source src="vdd.mp4" type="video/mp4">
 </video>
 
 <div class="collage">
@@ -139,13 +150,11 @@ button:hover{
     <p>
         I know I hurt you, and I regret it deeply.
         Every picture here reminds me how important you are to me.
-        I can't change what happened, but I truly want to make things right.
+        I can't change what happened, but I truly want to make things right and treat you better
       
     </p>
 
-    <button onclick="showMessage()">
-        Tap Here
-    </button>
+   
 
     <div class="hidden-message" id="message">
         You really do mean a lot to me.
@@ -153,8 +162,12 @@ button:hover{
 </div>
 
 <script>
-function showMessage(){
-    document.getElementById("message").style.display = "block";
+window.onload = function(){
+    setTimeout(function(){
+        const msg = document.getElementById("message");
+        msg.style.opacity = "1";
+        msg.style.transform = "translateY(0)";
+    }, 3000);
 }
 </script>
 
