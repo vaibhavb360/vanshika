@@ -48,7 +48,7 @@ body{
     animation:slowZoom 12s ease-in-out infinite alternate;
 }
 
-/* ✅ FIX: only 2.jpeg should NOT zoom/crop */
+/* FIX ONLY FOR 2.JPEG */
 .reel.fit img{
     object-fit:contain;
     background:black;
@@ -56,13 +56,11 @@ body{
     animation:none;
 }
 
-/* zoom animation */
 @keyframes slowZoom{
     from{ transform:scale(1.1); }
     to{ transform:scale(1.2); }
 }
 
-/* overlay */
 .reel::after{
     content:'';
     position:absolute;
@@ -78,7 +76,6 @@ body{
     z-index:-1;
 }
 
-/* TEXT */
 .content{
     color:white;
     text-align:center;
@@ -94,29 +91,11 @@ body{
     animation:fadeUp 1.2s ease;
 }
 
-.content h1{
-    font-size: 3.8rem;
-    margin-bottom: 18px;
-    letter-spacing: 1px;
-}
-
-.content p{
-    font-size: 1.6rem;
-    line-height: 1.8;
-}
-
 @keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+    from{ opacity:0; transform:translateY(30px); }
+    to{ opacity:1; transform:translateY(0); }
 }
 
-/* last slide emphasis */
 .reel:last-child::after{
     background:rgba(0,0,0,0.78);
 }
@@ -126,15 +105,9 @@ body{
     opacity:1;
 }
 
-/* mobile */
 @media(max-width:768px){
-    .content h1{
-        font-size: 2.6rem;
-    }
-
-    .content p{
-        font-size: 1.2rem;
-    }
+    .content h1{ font-size:2.6rem; }
+    .content p{ font-size:1.2rem; }
 }
 </style>
 </head>
@@ -143,10 +116,11 @@ body{
 
 <!-- REELS -->
 
-<div class="reel">
-    <video autoplay muted loop playsinline preload="auto">
+<div class="reel" id="firstReel">
+    <video id="firstVideo" autoplay muted playsinline preload="auto">
         <source src="memory1.mp4">
     </video>
+
     <div class="content">
         <h1>I'm Sorry</h1>
         <p>I know I hurt you.</p>
@@ -161,7 +135,6 @@ body{
     </div>
 </div>
 
-<!-- ✅ FIXED FIT SLIDE -->
 <div class="reel fit">
     <img src="2.jpeg" alt="">
     <div class="content">
@@ -216,6 +189,26 @@ window.addEventListener("wheel", () => paused = true);
 window.addEventListener("touchstart", () => paused = true);
 window.addEventListener("keydown", () => paused = true);
 
+function scrollToReel(index){
+    reels[index].scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+// 👉 FIRST VIDEO CONTROLS (IMPORTANT CHANGE)
+const firstVideo = document.getElementById("firstVideo");
+
+firstVideo.addEventListener("loadedmetadata", () => {
+    firstVideo.play();
+
+    // wait for video to END → then go next immediately
+    firstVideo.addEventListener("ended", () => {
+        scrollToReel(1);
+    });
+});
+
+// fallback auto scroll for rest of reels
 function getCurrentReelIndex() {
     let index = 0;
 
@@ -229,19 +222,20 @@ function getCurrentReelIndex() {
     return index;
 }
 
-function goToNextReel() {
-    if (paused) return;
+function goToNextReel(){
+    if(paused) return;
 
     const current = getCurrentReelIndex();
     const next = (current + 1) % reels.length;
 
-    reels[next].scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    scrollToReel(next);
 }
 
-setInterval(goToNextReel, 5000);
+// start normal auto-scroll AFTER first video ends
+setTimeout(() => {
+    setInterval(goToNextReel, 5000);
+}, 2000);
+
 </script>
 
 </body>
