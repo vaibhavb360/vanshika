@@ -1,153 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I'm Sorry Vanshu</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Inter', sans-serif;
-    background:black;
-    overflow-y:scroll;
-    scroll-snap-type:y mandatory;
-    scroll-behavior:smooth;
-}
-
-/* EACH REEL */
-.reel{
-    position:relative;
-    height:100vh;
-    width:100%;
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    transition: transform 0.8s ease;
-}
-
-/* VIDEO + IMAGE */
-.reel video,
-.reel img{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    z-index:-2;
-    transform:scale(1.1);
-    animation:slowZoom 12s ease-in-out infinite alternate;
-}
-
-/* special fit case */
-.reel.fit img{
-    object-fit:contain;
-    background:black;
-    transform:none;
-    animation:none;
-}
-
-@keyframes slowZoom{
-    from{ transform:scale(1.1); }
-    to{ transform:scale(1.2); }
-}
-
-/* overlay */
-.reel::after{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: radial-gradient(
-        circle at center,
-        rgba(0,0,0,0.2),
-        rgba(0,0,0,0.75)
-    );
-    z-index:-1;
-}
-
-/* TEXT (NO BOX, CLEAN LOOK) */
-.content{
-    color:white;
-    text-align:center;
-    padding:25px;
-    max-width:90%;
-    opacity:0.95;
-    letter-spacing:0.5px;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-    animation:fadeUp 1.2s ease;
-}
-
-@keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-/* last slide emphasis */
-.reel:last-child::after{
-    background:rgba(0,0,0,0.78);
-}
-
-/* mobile */
-@media(max-width:768px){
-    .content h1{
-        font-size:2.6rem;
-    }
-
-    .content p{
-        font-size:1.2rem;
-    }
-}
-
-/* =========================
-   ✨ ENHANCED ENDING SLIDE
-   ========================= */
-
 .end-content{
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:10px;
+    gap:14px;
 }
 
+/* main line (strongest) */
 .end-content h1{
-    font-size: 3.2rem;
+    font-size: 3.4rem;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
 }
 
+/* soft emotional line */
 .end-content .subtext{
-    font-size: 1.8rem;
-    opacity: 0.95;
+    font-size: 1.9rem;
+    opacity: 0.92;
 }
 
+/* subtle closing line */
 .end-content .small{
-    font-size: 1.1rem;
-    opacity: 0.7;
-    margin-top: 6px;
+    font-size: 1.05rem;
+    opacity: 0.65;
+    margin-top: 4px;
 }
 
-/* mobile tuning for ending */
+/* mobile tuning */
 @media(max-width:768px){
     .end-content h1{
         font-size: 2.4rem;
@@ -161,120 +41,3 @@ body{
         font-size: 1rem;
     }
 }
-</style>
-</head>
-
-<body>
-
-<!-- REELS -->
-
-<div class="reel">
-    <video id="firstVideo" autoplay muted playsinline preload="auto">
-        <source src="Memory1.mp4">
-    </video>
-
-    <div class="content">
-        <h1>I'm Sorry</h1>
-        <p>I know I hurt you.</p>
-        <p>And I regret it deeply.</p>
-    </div>
-</div>
-
-<div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
-
-<div class="reel fit"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
-
-<div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
-
-<div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
-
-<div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
-
-<div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
-
-<!-- FINAL SLIDE (IMPROVED) -->
-<div class="reel">
-    <video autoplay muted loop playsinline preload="auto">
-        <source src="memory3.mp4">
-    </video>
-
-    <div class="content end-content">
-        <h1>If you ever feel like talking again…</h1>
-        <p class="subtext">I’ll be here.</p>
-        <p class="small">No pressure. No expectations.</p>
-    </div>
-</div>
-
-<script>
-const reels = document.querySelectorAll(".reel");
-
-let currentIndex = 0;
-let isUserInteracting = false;
-
-function goToReel(index) {
-    const target = reels[index];
-
-    window.scrollTo({
-        top: target.offsetTop,
-        behavior: "smooth"
-    });
-}
-
-function getCurrentReelIndex() {
-    let closestIndex = 0;
-    let minDistance = Infinity;
-
-    reels.forEach((reel, i) => {
-        const distance = Math.abs(reel.getBoundingClientRect().top);
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestIndex = i;
-        }
-    });
-
-    return closestIndex;
-}
-
-function nextReel() {
-    if (isUserInteracting) return;
-
-    currentIndex = getCurrentReelIndex();
-    currentIndex++;
-
-    if (currentIndex >= reels.length) {
-        currentIndex = 0;
-    }
-
-    goToReel(currentIndex);
-}
-
-["touchstart", "scroll"].forEach(evt => {
-    window.addEventListener(evt, () => {
-        isUserInteracting = true;
-
-        clearTimeout(window.resumeTimer);
-        window.resumeTimer = setTimeout(() => {
-            isUserInteracting = false;
-        }, 4000);
-    }, { passive: true });
-});
-
-setTimeout(() => {
-    setInterval(nextReel, 4500);
-}, 2000);
-
-const firstVideo = document.getElementById("firstVideo");
-
-firstVideo.addEventListener("loadedmetadata", () => {
-    firstVideo.play();
-
-    firstVideo.addEventListener("ended", () => {
-        goToReel(1);
-        currentIndex = 1;
-    });
-});
-</script>
-
-</body>
-</html>
