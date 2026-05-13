@@ -20,15 +20,15 @@
 body{
     font-family:'Inter', sans-serif;
     background:black;
-    overflow:hidden; /* IMPORTANT FIX */
+    overflow:hidden;
 }
 
 /* VIEWPORT */
 .wrapper{
-    position:relative;
     height:100vh;
     width:100vw;
     overflow:hidden;
+    position:relative;
 }
 
 /* TRACK */
@@ -38,7 +38,7 @@ body{
     transition: transform 0.9s ease;
 }
 
-/* REELS */
+/* SLIDES */
 .reel{
     height:100vh;
     width:100vw;
@@ -68,7 +68,7 @@ body{
     to{ transform:scale(1.2); }
 }
 
-/* OVERLAY */
+/* DARK OVERLAY */
 .reel::after{
     content:'';
     position:absolute;
@@ -112,7 +112,6 @@ body{
 <body>
 
 <div class="wrapper">
-
     <div class="track" id="track">
 
         <div class="reel">
@@ -145,7 +144,6 @@ body{
         </div>
 
     </div>
-
 </div>
 
 <script>
@@ -170,21 +168,41 @@ function go(i){
     }, 900);
 }
 
-/* AUTO SCROLL (THIS NOW ACTUALLY WORKS) */
+/* AUTO SCROLL FORWARD ONLY */
 function next(){
     if(locked) return;
 
-    if(index >= reels.length - 1){
-        return;
+    if(index < reels.length - 1){
+        go(index + 1);
     }
-
-    go(index + 1);
 }
 
-/* start auto scroll */
-setInterval(next, 3000);
+/* AUTO TIMER */
+setInterval(next, 3500);
 
-/* start position */
+/* TOUCH NAVIGATION (SWIPE LEFT/RIGHT FEEL) */
+let startX = 0;
+
+window.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+});
+
+window.addEventListener("touchend", (e) => {
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    if(Math.abs(diff) < 40) return;
+
+    if(diff > 0){
+        // swipe right = go back
+        go(index - 1);
+    } else {
+        // swipe left = go forward
+        go(index + 1);
+    }
+});
+
+/* START */
 window.onload = () => {
     go(0);
 
