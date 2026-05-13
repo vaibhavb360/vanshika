@@ -47,7 +47,7 @@ body{
     opacity:1;
 }
 
-/* CINEMATIC MEDIA */
+/* MEDIA */
 .reel video,
 .reel img{
     position:absolute;
@@ -103,7 +103,6 @@ body{
     to{opacity:1; transform:translateY(0);}
 }
 
-/* END SLIDE */
 .end-content{
     display:flex;
     flex-direction:column;
@@ -112,7 +111,6 @@ body{
     gap:12px;
 }
 
-/* MOBILE */
 @media(max-width:768px){
     .content h1{font-size:2.6rem;}
     .content p{font-size:1.2rem;}
@@ -123,7 +121,6 @@ body{
 
 <body>
 
-<!-- REEL 1 -->
 <div class="reel reel-active">
     <video id="firstVideo" muted playsinline autoplay loop preload="auto">
         <source src="Memory1.mp4" type="video/mp4">
@@ -143,7 +140,6 @@ body{
 <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
 <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
-<!-- FINAL REEL -->
 <div class="reel">
     <video id="lastVideo" muted playsinline autoplay loop preload="auto">
         <source src="memory3.mp4" type="video/mp4">
@@ -160,12 +156,16 @@ body{
 const reels = document.querySelectorAll(".reel");
 let currentIndex = 0;
 let isUserInteracting = false;
-let autoScroll = true;
+
+/* activate reel */
+function setActive(i){
+    reels.forEach(r => r.classList.remove("reel-active"));
+    reels[i].classList.add("reel-active");
+}
 
 /* scroll */
 function goToReel(i){
-    reels.forEach(r => r.classList.remove("reel-active"));
-    reels[i].classList.add("reel-active");
+    setActive(i);
 
     window.scrollTo({
         top: reels[i].offsetTop,
@@ -173,25 +173,26 @@ function goToReel(i){
     });
 }
 
-/* next reel (fixed indexing) */
+/* AUTO SCROLL (RESTORED CLEAN VERSION) */
 function next(){
-    if(!autoScroll || isUserInteracting) return;
+    if(isUserInteracting) return;
 
-    if(currentIndex >= reels.length - 1){
-        currentIndex = reels.length - 1;
+    currentIndex++;
+
+    if(currentIndex >= reels.length){
+        currentIndex = reels.length - 1; // stop at end
         return;
     }
 
-    currentIndex++;
     goToReel(currentIndex);
 }
 
-/* mobile interaction disables auto scroll */
-window.addEventListener("wheel", ()=>{
-    autoScroll = false;
-});
+/* interval auto scroll */
+setInterval(()=>{
+    next();
+}, 3200);
 
-/* touch pause */
+/* pause on touch */
 window.addEventListener("touchstart", ()=>{
     isUserInteracting = true;
     setTimeout(()=> isUserInteracting=false, 4000);
@@ -208,20 +209,9 @@ window.addEventListener("load", async ()=>{
     }catch(e){
         console.log("Autoplay blocked:", e);
     }
-});
 
-/* initial state */
-window.addEventListener("load", ()=>{
-    reels[0].classList.add("reel-active");
+    setActive(0);
 });
-
-/* slower pacing for emotional ending */
-setInterval(()=>{
-    if(currentIndex === reels.length - 1){
-        return; // pause at final slide
-    }
-    next();
-}, 3500);
 
 </script>
 
