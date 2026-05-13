@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <meta charset="UTF-8">
@@ -19,10 +20,14 @@
 body{
     font-family:'Inter', sans-serif;
     background:black;
+
     overflow-y:scroll;
 
     scroll-snap-type:y mandatory;
     scroll-behavior:smooth;
+
+    /* smoother mobile feel */
+    overscroll-behavior-y:none;
 }
 
 /* EACH REEL */
@@ -339,7 +344,6 @@ function goToReel(index){
 function getCurrentReelIndex(){
 
     let closestIndex = 0;
-
     let minDistance = Infinity;
 
     reels.forEach((reel, i) => {
