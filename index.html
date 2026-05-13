@@ -157,82 +157,80 @@ body{
 const reels = document.querySelectorAll(".reel");
 
 let currentIndex = 0;
-let isUserTouching = false;
-let autoScrollEnabled = true;
+let isLocked = false;
 
-/* set active reel */
+/* active UI */
 function setActive(i){
     reels.forEach(r => r.classList.remove("reel-active"));
     reels[i].classList.add("reel-active");
 }
 
-/* smooth scroll (mobile safe) */
+/* RELIABLE MOBILE SCROLL */
 function goToReel(i){
     if(i < 0 || i >= reels.length) return;
 
     currentIndex = i;
     setActive(i);
 
-    reels[i].scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+    const top = reels[i].offsetTop;
+
+    isLocked = true;
+
+    window.scrollTo({
+        top: top,
+        behavior: "smooth"
     });
+
+    setTimeout(() => {
+        isLocked = false;
+    }, 900);
 }
 
 /* AUTO SCROLL ENGINE */
 function nextSlide(){
-    if(!autoScrollEnabled || isUserTouching) return;
+    if(isLocked) return;
 
     if(currentIndex >= reels.length - 1){
-        autoScrollEnabled = false;
         return;
     }
 
     goToReel(currentIndex + 1);
 }
 
-/* timing */
-setInterval(nextSlide, 4000);
+/* start auto scroll */
+setInterval(nextSlide, 3500);
 
-/* pause auto-scroll on touch */
-window.addEventListener("touchstart", () => {
-
-    isUserTouching = true;
-
-    clearTimeout(window.touchTimer);
-
-    window.touchTimer = setTimeout(() => {
-        isUserTouching = false;
-    }, 3000);
-
-}, { passive: true });
-
-/* sync scroll position with manual swipes */
+/* sync manual scroll */
 window.addEventListener("scroll", () => {
 
-    clearTimeout(window.scrollTimer);
+    let closest = 0;
+    let minDist = Infinity;
 
-    window.scrollTimer = setTimeout(() => {
+    reels.forEach((r, i) => {
+        const dist = Math.abs(r.getBoundingClientRect().top);
+        if(dist < minDist){
+            minDist = dist;
+            closest = i;
+        }
+    });
 
-        let closest = 0;
-        let minDist = Infinity;
-
-        reels.forEach((r, i) => {
-            const dist = Math.abs(r.getBoundingClientRect().top);
-            if(dist < minDist){
-                minDist = dist;
-                closest = i;
-            }
-        });
-
-        currentIndex = closest;
-        setActive(currentIndex);
-
-    }, 100);
+    currentIndex = closest;
+    setActive(currentIndex);
 
 }, { passive: true });
 
-/* autoplay videos (iOS safe) */
+/* pause on touch */
+window.addEventListener("touchstart", () => {
+
+    isLocked = true;
+
+    setTimeout(() => {
+        isLocked = false;
+    }, 4000);
+
+}, { passive: true });
+
+/* autoplay videos */
 window.addEventListener("load", async () => {
 
     const v1 = document.getElementById("firstVideo");
@@ -249,7 +247,7 @@ window.addEventListener("load", async () => {
 
     setTimeout(() => {
         goToReel(0);
-    }, 500);
+    }, 600);
 
 });
 
