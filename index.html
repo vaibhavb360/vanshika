@@ -62,7 +62,7 @@ body{
     transform:scale(1.05);
 }
 
-/* Optional better fit images */
+/* OPTIONAL BETTER FIT IMAGES */
 .reel img.fit-contain{
     object-fit:contain;
     background:black;
@@ -115,7 +115,7 @@ body{
     <div class="track" id="track">
 
         <div class="reel">
-            <video id="firstVideo" muted playsinline autoplay loop>
+            <video muted playsinline autoplay loop>
                 <source src="Memory1.mp4">
             </video>
             <div class="content">
@@ -133,7 +133,7 @@ body{
         <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
         <div class="reel">
-            <video id="lastVideo" muted playsinline autoplay loop>
+            <video muted playsinline autoplay loop>
                 <source src="memory3.mp4">
             </video>
 
@@ -153,11 +153,11 @@ const reels = document.querySelectorAll(".reel");
 
 let index = 0;
 let locked = false;
+let autoPaused = false;
 
-/* ✅ FIXED NAVIGATION LOGIC */
+/* MOVE FUNCTION */
 function go(i){
 
-    // clamp safely (no broken state)
     index = Math.max(0, Math.min(i, reels.length - 1));
 
     locked = true;
@@ -169,9 +169,9 @@ function go(i){
     }, 800);
 }
 
-/* AUTO SCROLL */
+/* AUTO SCROLL (forward only) */
 function next(){
-    if(locked) return;
+    if(locked || autoPaused) return;
 
     if(index < reels.length - 1){
         go(index + 1);
@@ -180,27 +180,33 @@ function next(){
 
 setInterval(next, 3500);
 
-/* SWIPE */
-let startX = 0;
+/* VERTICAL SWIPE */
+let startY = 0;
 
 window.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    autoPaused = true;
 });
 
 window.addEventListener("touchend", (e) => {
 
-    let diff = e.changedTouches[0].clientX - startX;
+    let diff = e.changedTouches[0].clientY - startY;
 
-    if(Math.abs(diff) < 40) return;
+    if(Math.abs(diff) > 40){
 
-    if(diff > 0){
-        go(index - 1);
-    } else {
-        go(index + 1);
+        if(diff > 0){
+            go(index - 1); // swipe DOWN → back
+        } else {
+            go(index + 1); // swipe UP → forward
+        }
     }
+
+    setTimeout(() => {
+        autoPaused = false;
+    }, 1000);
 });
 
-/* RESTART ON END */
+/* TAP RESTART AT END */
 window.addEventListener("click", () => {
     if(index === reels.length - 1){
         go(0);
