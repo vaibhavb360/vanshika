@@ -116,13 +116,13 @@ body{
 
     text-shadow:0 2px 12px rgba(0,0,0,0.8);
 
-    animation:fadeUp 1.2s ease;
+    animation:fadeUp 1s ease;
 }
 
-/* 🔥 FIX: first reel hidden until video starts */
+/* FIX: hidden initially so it doesn't appear before video loads */
 .first-content{
     opacity:0;
-    transform:translateY(30px);
+    transform:translateY(20px);
 }
 
 .content h1{
@@ -190,7 +190,7 @@ body{
 <!-- REEL 1 -->
 <div class="reel">
 
-    <video id="firstVideo" muted playsinline preload="auto">
+    <video id="firstVideo" muted playsinline preload="auto" autoplay>
         <source src="Memory1.mp4" type="video/mp4">
     </video>
 
@@ -204,41 +204,13 @@ body{
 
 </div>
 
-<!-- REEL 2 -->
-<div class="reel">
-    <img src="1.jpeg">
-    <div class="content"><p>Every picture reminds me of you.</p></div>
-</div>
-
-<!-- REEL 3 -->
-<div class="reel fit">
-    <img src="2.jpeg">
-    <div class="content"><p>I wish I handled things better.</p></div>
-</div>
-
-<!-- REEL 4 -->
-<div class="reel">
-    <img src="3.jpeg">
-    <div class="content"><p>I never wanted to hurt you.</p></div>
-</div>
-
-<!-- REEL 5 -->
-<div class="reel">
-    <img src="4.jpeg">
-    <div class="content"><p>Every moment still stays with me.</p></div>
-</div>
-
-<!-- REEL 6 -->
-<div class="reel">
-    <img src="5.jpeg">
-    <div class="content"><p>I miss how things used to be.</p></div>
-</div>
-
-<!-- REEL 7 -->
-<div class="reel">
-    <img src="6.jpeg">
-    <div class="content"><p>I hope you’re doing okay.</p></div>
-</div>
+<!-- REELS -->
+<div class="reel"><img src="1.jpeg"><div class="content"><p>Every picture reminds me of you.</p></div></div>
+<div class="reel fit"><img src="2.jpeg"><div class="content"><p>I wish I handled things better.</p></div></div>
+<div class="reel"><img src="3.jpeg"><div class="content"><p>I never wanted to hurt you.</p></div></div>
+<div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me.</p></div></div>
+<div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be.</p></div></div>
+<div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you’re doing okay.</p></div></div>
 
 <!-- FINAL REEL -->
 <div class="reel">
@@ -263,46 +235,41 @@ const reels = document.querySelectorAll(".reel");
 let currentIndex = 0;
 let isUserInteracting = false;
 
-/* go to reel */
+/* scroll to reel */
 function goToReel(index){
-    const target = reels[index];
     window.scrollTo({
-        top: target.offsetTop,
+        top: reels[index].offsetTop,
         behavior: "smooth"
     });
 }
 
-/* detect current reel */
+/* detect active reel */
 function getCurrentReelIndex(){
-    let closestIndex = 0;
-    let minDistance = Infinity;
+    let closest = 0;
+    let min = Infinity;
 
-    reels.forEach((reel, i) => {
-        const distance = Math.abs(reel.getBoundingClientRect().top);
-        if(distance < minDistance){
-            minDistance = distance;
-            closestIndex = i;
+    reels.forEach((r, i) => {
+        const d = Math.abs(r.getBoundingClientRect().top);
+        if(d < min){
+            min = d;
+            closest = i;
         }
     });
 
-    return closestIndex;
+    return closest;
 }
 
-/* next reel */
+/* auto next */
 function nextReel(){
     if(isUserInteracting) return;
 
     currentIndex = getCurrentReelIndex();
-    currentIndex++;
-
-    if(currentIndex >= reels.length){
-        currentIndex = 0;
-    }
+    currentIndex = (currentIndex + 1) % reels.length;
 
     goToReel(currentIndex);
 }
 
-/* pause when user interacts */
+/* pause on interaction */
 ["touchstart","scroll"].forEach(evt => {
     window.addEventListener(evt, () => {
         isUserInteracting = true;
@@ -314,35 +281,29 @@ function nextReel(){
     }, { passive:true });
 });
 
-/* auto scroll */
-setTimeout(() => {
-    setInterval(nextReel, 2600);
-}, 1500);
+/* faster swipe timing */
+setInterval(nextReel, 2400);
 
-/* ===== FIXED FIRST REEL SYNC ===== */
+/* FIX: perfect sync for first reel */
 const firstVideo = document.getElementById("firstVideo");
 const firstContent = document.querySelector(".first-content");
 
-function showFirstText(){
-    firstContent.style.transition = "all 1s ease";
-    firstContent.style.opacity = "0.95";
-    firstContent.style.transform = "translateY(0)";
-}
-
-/* primary trigger */
-firstVideo.addEventListener("canplay", async () => {
+/* ensure video starts immediately */
+firstVideo.addEventListener("loadeddata", async () => {
     try {
         await firstVideo.play();
-        setTimeout(showFirstText, 300);
-    } catch(err) {}
+
+        // show text only after video actually starts rendering
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                firstContent.style.opacity = "0.95";
+                firstContent.style.transform = "translateY(0)";
+            }, 150);
+        });
+
+    } catch(e) {}
 });
 
-/* fallback for mobile */
-firstVideo.addEventListener("loadeddata", () => {
-    setTimeout(showFirstText, 500);
-});
-
-/* move after video ends */
 firstVideo.addEventListener("ended", () => {
     goToReel(1);
     currentIndex = 1;
