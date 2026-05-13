@@ -20,7 +20,7 @@
 body{
     font-family:'Inter', sans-serif;
     background:black;
-    overflow:hidden; /* IMPORTANT: disable scroll */
+    overflow:hidden; /* IMPORTANT FIX */
 }
 
 /* VIEWPORT */
@@ -31,7 +31,7 @@ body{
     overflow:hidden;
 }
 
-/* SLIDER TRACK */
+/* TRACK */
 .track{
     height:100%;
     width:100%;
@@ -112,6 +112,7 @@ body{
 <body>
 
 <div class="wrapper">
+
     <div class="track" id="track">
 
         <div class="reel">
@@ -121,6 +122,7 @@ body{
             <div class="content">
                 <h1>I'm Sorry</h1>
                 <p>I know I hurt you.</p>
+                <p>And I regret it deeply.</p>
             </div>
         </div>
 
@@ -143,6 +145,7 @@ body{
         </div>
 
     </div>
+
 </div>
 
 <script>
@@ -153,8 +156,8 @@ const reels = document.querySelectorAll(".reel");
 let index = 0;
 let locked = false;
 
-/* MOVE SLIDE (THIS IS THE KEY FIX) */
-function goTo(i){
+/* MOVE SLIDE */
+function go(i){
     if(i < 0 || i >= reels.length) return;
 
     index = i;
@@ -167,35 +170,32 @@ function goTo(i){
     }, 900);
 }
 
-/* AUTO SCROLL (NOW 100% RELIABLE) */
+/* AUTO SCROLL (THIS NOW ACTUALLY WORKS) */
 function next(){
     if(locked) return;
-    if(index >= reels.length - 1) return;
 
-    goTo(index + 1);
+    if(index >= reels.length - 1){
+        return;
+    }
+
+    go(index + 1);
 }
 
-setInterval(next, 3500);
+/* start auto scroll */
+setInterval(next, 3000);
 
-/* TOUCH PAUSE */
-window.addEventListener("touchstart", () => {
-    locked = true;
-    setTimeout(() => locked = false, 4000);
-}, { passive:true });
-
-/* autoplay fix */
-window.addEventListener("load", async () => {
+/* start position */
+window.onload = () => {
+    go(0);
 
     const v1 = document.getElementById("firstVideo");
     const v2 = document.getElementById("lastVideo");
 
-    try {
-        await v1.play();
-        await v2.play();
-    } catch(e){}
-
-    goTo(0);
-});
+    try{
+        v1.play();
+        v2.play();
+    }catch(e){}
+};
 
 </script>
 
