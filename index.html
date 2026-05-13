@@ -121,6 +121,7 @@ body{
 
 <body>
 
+<!-- REELS -->
 <div class="reel reel-active">
     <video id="firstVideo" muted playsinline autoplay loop preload="auto">
         <source src="Memory1.mp4" type="video/mp4">
@@ -154,63 +155,102 @@ body{
 <script>
 
 const reels = document.querySelectorAll(".reel");
-let currentIndex = 0;
-let isUserInteracting = false;
 
-/* activate reel */
+let currentIndex = 0;
+let isUserTouching = false;
+let autoScrollEnabled = true;
+
+/* set active reel */
 function setActive(i){
     reels.forEach(r => r.classList.remove("reel-active"));
     reels[i].classList.add("reel-active");
 }
 
-/* scroll */
+/* smooth scroll (mobile safe) */
 function goToReel(i){
+    if(i < 0 || i >= reels.length) return;
+
+    currentIndex = i;
     setActive(i);
 
-    window.scrollTo({
-        top: reels[i].offsetTop,
-        behavior: "smooth"
+    reels[i].scrollIntoView({
+        behavior: "smooth",
+        block: "start"
     });
 }
 
-/* AUTO SCROLL (RESTORED CLEAN VERSION) */
-function next(){
-    if(isUserInteracting) return;
+/* AUTO SCROLL ENGINE */
+function nextSlide(){
+    if(!autoScrollEnabled || isUserTouching) return;
 
-    currentIndex++;
-
-    if(currentIndex >= reels.length){
-        currentIndex = reels.length - 1; // stop at end
+    if(currentIndex >= reels.length - 1){
+        autoScrollEnabled = false;
         return;
     }
 
-    goToReel(currentIndex);
+    goToReel(currentIndex + 1);
 }
 
-/* interval auto scroll */
-setInterval(()=>{
-    next();
-}, 3200);
+/* timing */
+setInterval(nextSlide, 4000);
 
-/* pause on touch */
-window.addEventListener("touchstart", ()=>{
-    isUserInteracting = true;
-    setTimeout(()=> isUserInteracting=false, 4000);
-}, {passive:true});
+/* pause auto-scroll on touch */
+window.addEventListener("touchstart", () => {
 
-/* autoplay fix */
-window.addEventListener("load", async ()=>{
+    isUserTouching = true;
+
+    clearTimeout(window.touchTimer);
+
+    window.touchTimer = setTimeout(() => {
+        isUserTouching = false;
+    }, 3000);
+
+}, { passive: true });
+
+/* sync scroll position with manual swipes */
+window.addEventListener("scroll", () => {
+
+    clearTimeout(window.scrollTimer);
+
+    window.scrollTimer = setTimeout(() => {
+
+        let closest = 0;
+        let minDist = Infinity;
+
+        reels.forEach((r, i) => {
+            const dist = Math.abs(r.getBoundingClientRect().top);
+            if(dist < minDist){
+                minDist = dist;
+                closest = i;
+            }
+        });
+
+        currentIndex = closest;
+        setActive(currentIndex);
+
+    }, 100);
+
+}, { passive: true });
+
+/* autoplay videos (iOS safe) */
+window.addEventListener("load", async () => {
+
     const v1 = document.getElementById("firstVideo");
     const v2 = document.getElementById("lastVideo");
 
-    try{
+    try {
         await v1.play();
         await v2.play();
-    }catch(e){
+    } catch (e) {
         console.log("Autoplay blocked:", e);
     }
 
     setActive(0);
+
+    setTimeout(() => {
+        goToReel(0);
+    }, 500);
+
 });
 
 </script>
