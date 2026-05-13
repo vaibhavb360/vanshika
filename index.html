@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>I'm Sorry Vanshu</title>
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -17,6 +20,7 @@ body{
     font-family:'Inter', sans-serif;
     background:black;
     overflow-y:scroll;
+
     scroll-snap-type:y mandatory;
     scroll-behavior:smooth;
 }
@@ -24,43 +28,54 @@ body{
 /* EACH REEL */
 .reel{
     position:relative;
+
     height:100vh;
     width:100%;
+
     scroll-snap-align:start;
     scroll-snap-stop:always;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     overflow:hidden;
 
-    /* faster smoother transitions */
-    transition: transform 0.25s ease;
+    transition:transform 0.25s ease;
 }
 
 /* VIDEO + IMAGE */
 .reel video,
 .reel img{
     position:absolute;
+
     top:0;
     left:0;
+
     width:100%;
     height:100%;
+
     object-fit:cover;
+
     z-index:-2;
 
     transform:scale(1.1);
+
     animation:slowZoom 12s ease-in-out infinite alternate;
 }
 
-/* special fit case */
+/* special fit image */
 .reel.fit img{
     object-fit:contain;
     background:black;
+
     transform:none;
     animation:none;
 }
 
+/* cinematic zoom */
 @keyframes slowZoom{
+
     from{
         transform:scale(1.1);
     }
@@ -70,12 +85,15 @@ body{
     }
 }
 
-/* overlay */
+/* dark overlay */
 .reel::after{
     content:'';
+
     position:absolute;
+
     top:0;
     left:0;
+
     width:100%;
     height:100%;
 
@@ -91,11 +109,14 @@ body{
 /* TEXT */
 .content{
     color:white;
+
     text-align:center;
+
     padding:25px;
     max-width:90%;
 
     opacity:0.95;
+
     letter-spacing:0.5px;
 
     text-shadow:0 2px 12px rgba(0,0,0,0.8);
@@ -114,7 +135,9 @@ body{
     line-height:1.7;
 }
 
+/* fade animation */
 @keyframes fadeUp{
+
     from{
         opacity:0;
         transform:translateY(30px);
@@ -126,19 +149,23 @@ body{
     }
 }
 
-/* ENDING SLIDE */
+/* FINAL SLIDE */
 .end-content{
     display:flex;
     flex-direction:column;
+
     align-items:center;
     justify-content:center;
+
     gap:14px;
 }
 
 .end-content h1{
     font-size:3.4rem;
     font-weight:600;
+
     letter-spacing:0.6px;
+
     margin-bottom:6px;
 }
 
@@ -152,7 +179,7 @@ body{
     opacity:0.65;
 }
 
-/* darker final overlay */
+/* darker ending */
 .reel:last-child::after{
     background:rgba(0,0,0,0.78);
 }
@@ -180,6 +207,7 @@ body{
         font-size:1rem;
     }
 }
+
 </style>
 </head>
 
@@ -193,9 +221,13 @@ body{
     </video>
 
     <div class="content">
+
         <h1>I'm Sorry</h1>
+
         <p>I know I hurt you.</p>
+
         <p>And I regret it deeply.</p>
+
     </div>
 
 </div>
@@ -279,33 +311,35 @@ body{
 
         <p class="subtext">I’ll be here.</p>
 
+        <p class="small">No pressure. No expectations.</p>
+
     </div>
 
 </div>
 
 <script>
+
 const reels = document.querySelectorAll(".reel");
 
 let currentIndex = 0;
 let isUserInteracting = false;
 
-/* scroll to reel */
+/* go to reel */
 function goToReel(index){
 
     const target = reels[index];
 
     window.scrollTo({
         top: target.offsetTop,
-
-        /* smoother but still fast */
         behavior: "smooth"
     });
 }
 
-/* find active reel */
+/* detect current reel */
 function getCurrentReelIndex(){
 
     let closestIndex = 0;
+
     let minDistance = Infinity;
 
     reels.forEach((reel, i) => {
@@ -324,7 +358,7 @@ function getCurrentReelIndex(){
     return closestIndex;
 }
 
-/* auto next reel */
+/* next reel */
 function nextReel(){
 
     if(isUserInteracting) return;
@@ -340,8 +374,8 @@ function nextReel(){
     goToReel(currentIndex);
 }
 
-/* pause auto scroll while user interacts */
-["touchstart", "scroll"].forEach(evt => {
+/* pause when user touches screen */
+["touchstart","scroll"].forEach(evt => {
 
     window.addEventListener(evt, () => {
 
@@ -359,14 +393,14 @@ function nextReel(){
 
 });
 
-/* faster reel timing */
+/* auto reel timing */
 setTimeout(() => {
 
     setInterval(nextReel, 2600);
 
 }, 1500);
 
-/* first video auto transition */
+/* first video transition */
 const firstVideo = document.getElementById("firstVideo");
 
 firstVideo.addEventListener("loadedmetadata", () => {
@@ -382,6 +416,7 @@ firstVideo.addEventListener("loadedmetadata", () => {
     });
 
 });
+
 </script>
 
 </body>
