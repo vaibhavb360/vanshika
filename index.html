@@ -38,14 +38,7 @@ body{
     width:100%;
     height:100%;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
     background:black;
-
-    opacity:0;
-    transition:opacity 0.8s ease;
 }
 
 /* VIDEO */
@@ -63,8 +56,6 @@ video{
 
     transform:translateZ(0);
     backface-visibility:hidden;
-
-    z-index:1;
 }
 
 /* OVERLAY */
@@ -77,8 +68,6 @@ video{
         rgba(0,0,0,0.15),
         rgba(0,0,0,0.75)
     );
-
-    z-index:2;
 }
 
 /* CONTENT */
@@ -93,6 +82,7 @@ video{
     justify-content:center;
 
     text-align:center;
+
     padding:30px;
 
     color:white;
@@ -100,8 +90,6 @@ video{
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     text-shadow:0 2px 12px rgba(0,0,0,0.9);
-
-    z-index:3;
 }
 
 .content h1{
@@ -124,11 +112,9 @@ video{
     color:white;
     font-size:14px;
 
-    opacity:0.7;
+    opacity:0.75;
 
     animation:pulse 2s infinite;
-
-    z-index:5;
 }
 
 @keyframes pulse{
@@ -186,14 +172,8 @@ video{
 <script>
 
 const video = document.getElementById("video");
-const wrapper = document.querySelector(".wrapper");
 
 let started = false;
-
-/* SHOW PAGE */
-function showPage(){
-    wrapper.style.opacity = "1";
-}
 
 /* START VIDEO */
 async function startVideo(){
@@ -211,58 +191,36 @@ async function startVideo(){
         }
 
         started = true;
-        showPage();
 
-    }catch(e){
-
-        showPage();
-
+    }catch(err){
+        // autoplay blocked — wait for user gesture
     }
+
 }
 
-/* LOAD FIX */
+/* LOAD START */
 window.addEventListener("load", () => {
 
     video.load();
 
     setTimeout(() => {
         startVideo();
-    }, 300);
+    }, 400);
 
 });
 
-/* READY FIX */
-video.addEventListener("loadeddata", () => {
+/* INSTAGRAM / WEBVIEW FALLBACK */
+document.addEventListener("touchstart", startVideo, { once:true });
+document.addEventListener("click", startVideo, { once:true });
 
-    startVideo();
-
-});
-
-/* USER INTERACTION FIX (INSTAGRAM) */
-function userStart(){
-    startVideo();
-}
-
-document.addEventListener("touchstart", userStart, { once:true });
-document.addEventListener("click", userStart, { once:true });
-
-/* RESUME IF PAUSED */
+/* RESUME IF USER RETURNS */
 document.addEventListener("visibilitychange", () => {
 
-    if(!document.hidden && video.paused){
+    if(!document.hidden){
         video.play().catch(()=>{});
     }
 
 });
-
-/* FORCE PLAY LOOP (INSTAGRAM WEBVIEW BUG FIX) */
-setInterval(() => {
-
-    if(!document.hidden && video.paused){
-        video.play().catch(()=>{});
-    }
-
-}, 1500);
 
 </script>
 
