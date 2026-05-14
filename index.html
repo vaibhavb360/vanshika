@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>I'm Sorry Vanshu</title>
 
-<!-- PRELOAD -->
-<link rel="preload" as="video" href="Memory11.mp4">
-<link rel="preload" as="video" href="memory33.mp4">
-<link rel="preload" as="image" href="1.jpeg">
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+rel="stylesheet">
 
 <style>
 
@@ -28,35 +28,30 @@ body{
     height:100%;
     overflow:hidden;
     background:black;
-    font-family:'Poppins', sans-serif;
-
-    overscroll-behavior:none;
-    touch-action:pan-y;
+    font-family:'Poppins',sans-serif;
 }
 
-/* VIEWPORT */
+/* WRAPPER */
 .wrapper{
+    position:relative;
     width:100vw;
     height:100vh;
-    height:100dvh;
     overflow:hidden;
-    position:relative;
-}
-
-/* TRACK */
-.track{
-    width:100%;
-    height:100%;
-    transition:transform 0.7s cubic-bezier(0.22,1,0.36,1);
-    will-change:transform;
 }
 
 /* REELS */
 .reel{
-    width:100vw;
-    height:100vh;
-    height:100dvh;
-    position:relative;
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:
+    opacity 1s ease;
 
     display:flex;
     align-items:center;
@@ -64,6 +59,13 @@ body{
 
     overflow:hidden;
     background:black;
+}
+
+/* ACTIVE */
+.reel.active{
+    opacity:1;
+    visibility:visible;
+    z-index:2;
 }
 
 /* MEDIA */
@@ -81,16 +83,9 @@ body{
     z-index:-2;
 }
 
-/* VIDEO FIX */
-.reel video{
-    background:black;
-    transform:translateZ(0);
-    backface-visibility:hidden;
-}
-
-/* IMAGE CONTAIN */
-.reel img.fit-contain{
-    object-fit:contain;
+/* CONTAIN */
+.fit-contain{
+    object-fit:contain !important;
     background:black;
 }
 
@@ -104,7 +99,7 @@ body{
     radial-gradient(
         circle,
         rgba(0,0,0,0.15),
-        rgba(0,0,0,0.72)
+        rgba(0,0,0,0.75)
     );
 
     z-index:-1;
@@ -114,12 +109,12 @@ body{
 .content{
     color:white;
     text-align:center;
-    padding:24px;
+    padding:25px;
 
     text-shadow:
-    0 2px 10px rgba(0,0,0,0.85);
+    0 2px 12px rgba(0,0,0,0.9);
 
-    z-index:2;
+    z-index:3;
 }
 
 .content h1{
@@ -128,56 +123,8 @@ body{
 }
 
 .content p{
-    font-size:1.3rem;
+    font-size:1.2rem;
     line-height:1.5;
-}
-
-/* FIRST TEXT */
-#firstText{
-    opacity:0;
-    transition:opacity 1.2s ease;
-}
-
-/* FINAL CONTENT */
-.end-content{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-}
-
-/* ZOOM */
-.reel img{
-    animation:zoomIn 12s linear forwards;
-}
-
-.reel video{
-    animation:zoomOut 12s linear forwards;
-}
-
-@keyframes zoomIn{
-
-    from{
-        transform:scale(1);
-    }
-
-    to{
-        transform:scale(1.08);
-    }
-
-}
-
-@keyframes zoomOut{
-
-    from{
-        transform:scale(1.08);
-    }
-
-    to{
-        transform:scale(1);
-    }
-
 }
 
 /* MOBILE */
@@ -188,7 +135,7 @@ body{
     }
 
     .content p{
-        font-size:1.05rem;
+        font-size:1rem;
     }
 
 }
@@ -200,138 +147,130 @@ body{
 
 <div class="wrapper">
 
-    <div class="track" id="track">
+    <!-- REEL 1 -->
+    <div class="reel active">
 
-        <!-- FIRST REEL -->
-        <div class="reel">
+        <video
+            muted
+            autoplay
+            loop
+            playsinline
+            preload="auto">
 
-            <video
-                id="firstVideo"
-                muted
-                autoplay
-                loop
-                playsinline
-                webkit-playsinline
-                x5-playsinline
-                x5-video-player-type="h5"
-                preload="auto">
+            <source
+            src="Memory11.mp4"
+            type="video/mp4">
 
-                <source
-                    src="Memory11.mp4"
-                    type="video/mp4">
+        </video>
 
-            </video>
+        <div class="content">
 
-            <div class="content" id="firstText">
+            <h1>I'm Sorry</h1>
 
-                <h1>I'm Sorry</h1>
+            <p>I know I hurt you.</p>
 
-                <p>I know I hurt you.</p>
-
-                <p>And I regret it deeply.</p>
-
-            </div>
+            <p>And I regret it deeply.</p>
 
         </div>
 
-        <!-- IMAGES -->
+    </div>
 
-        <div class="reel">
+    <!-- REEL 2 -->
+    <div class="reel">
 
-            <img src="1.jpeg">
+        <img src="1.jpeg">
 
-            <div class="content">
-                <p>Some memories don't really fade</p>
-            </div>
-
+        <div class="content">
+            <p>Some memories don't really fade</p>
         </div>
 
-        <div class="reel">
+    </div>
 
-            <img
-                class="fit-contain"
-                src="2.jpeg">
+    <!-- REEL 3 -->
+    <div class="reel">
 
-            <div class="content">
-                <p>I wish I handled things better</p>
-            </div>
+        <img
+        class="fit-contain"
+        src="2.jpeg">
 
+        <div class="content">
+            <p>I wish I handled things better</p>
         </div>
 
-        <div class="reel">
+    </div>
 
-            <img
-                class="fit-contain"
-                src="3.jpeg">
+    <!-- REEL 4 -->
+    <div class="reel">
 
-            <div class="content">
-                <p>
-                    I didn’t realize how much you meant
-                    to me until everything changed
-                </p>
-            </div>
+        <img
+        class="fit-contain"
+        src="3.jpeg">
 
+        <div class="content">
+            <p>
+                I didn’t realize how much you meant
+                to me until everything changed
+            </p>
         </div>
 
-        <div class="reel">
+    </div>
 
-            <img src="4.jpeg">
+    <!-- REEL 5 -->
+    <div class="reel">
 
-            <div class="content">
-                <p>You were never just an option to me</p>
-            </div>
+        <img src="4.jpeg">
 
+        <div class="content">
+            <p>You were never just an option to me</p>
         </div>
 
-        <div class="reel">
+    </div>
 
-            <img src="5.jpeg">
+    <!-- REEL 6 -->
+    <div class="reel">
 
-            <div class="content">
-                <p>I miss how things used to be</p>
-            </div>
+        <img src="5.jpeg">
 
+        <div class="content">
+            <p>I miss how things used to be</p>
         </div>
 
-        <div class="reel">
+    </div>
 
-            <img src="6.jpeg">
+    <!-- REEL 7 -->
+    <div class="reel">
 
-            <div class="content">
-                <p>I hope you're doing okay</p>
-            </div>
+        <img src="6.jpeg">
 
+        <div class="content">
+            <p>I hope you're doing okay</p>
         </div>
 
-        <!-- FINAL REEL -->
+    </div>
 
-        <div class="reel">
+    <!-- FINAL -->
+    <div class="reel">
 
-            <video
-                muted
-                autoplay
-                loop
-                playsinline
-                webkit-playsinline
-                x5-playsinline
-                x5-video-player-type="h5"
-                preload="auto">
+        <video
+            muted
+            autoplay
+            loop
+            playsinline
+            preload="auto">
 
-                <source
-                    src="memory33.mp4"
-                    type="video/mp4">
+            <source
+            src="memory33.mp4"
+            type="video/mp4">
 
-            </video>
+        </video>
 
-            <div class="content end-content">
+        <div class="content">
 
-                <h1>
-                    If you ever feel like talking again...
-                </h1>
+            <h1>
+                If you ever feel like talking again...
+            </h1>
 
-                <p>I’ll be here</p>
-
-            </div>
+            <p>I’ll be here</p>
 
         </div>
 
@@ -341,127 +280,73 @@ body{
 
 <script>
 
-const track =
-document.getElementById("track");
-
 const reels =
 document.querySelectorAll(".reel");
 
 const videos =
 document.querySelectorAll("video");
 
-const firstText =
-document.getElementById("firstText");
+let current = 0;
 
-let index = 0;
-let locked = false;
-let autoPaused = false;
-let autoScrollInterval;
-
-/* PLAY ONLY ACTIVE VIDEO */
+/* PLAY ACTIVE VIDEO */
 function handleVideos(){
 
-    videos.forEach((video) => {
+    videos.forEach(video => {
 
-        const reel =
-        video.closest(".reel");
-
-        const reelIndex =
-        [...reels].indexOf(reel);
-
-        if(reelIndex === index){
-
-            video.muted = true;
-
-            const promise =
-            video.play();
-
-            if(promise !== undefined){
-
-                promise.catch(() => {});
-
-            }
-
-        }else{
-
-            video.pause();
-            video.currentTime = 0;
-
-        }
+        video.pause();
 
     });
 
-}
+    const active =
+    reels[current];
 
-/* MOVE */
-function go(i){
+    const activeVideo =
+    active.querySelector("video");
 
-    if(locked) return;
+    if(activeVideo){
 
-    index = Math.max(
-        0,
-        Math.min(i, reels.length - 1)
-    );
-
-    locked = true;
-
-    track.style.transform =
-    `translate3d(
-        0,
-        -${index * window.innerHeight}px,
-        0
-    )`;
-
-    handleVideos();
-
-    setTimeout(() => {
-
-        locked = false;
-
-    }, 700);
-
-}
-
-/* NEXT */
-function next(){
-
-    if(locked || autoPaused) return;
-
-    if(index < reels.length - 1){
-
-        go(index + 1);
+        activeVideo.play()
+        .catch(() => {});
 
     }
 
 }
 
-/* AUTO SCROLL */
-function startAutoScroll(){
+/* SHOW REEL */
+function showSlide(index){
 
-    clearInterval(autoScrollInterval);
+    reels.forEach(reel => {
 
-    autoScrollInterval = setInterval(() => {
+        reel.classList.remove("active");
 
-        next();
+    });
 
-    }, 3500);
+    reels[index]
+    .classList.add("active");
 
-}
-
-/* LOAD */
-window.addEventListener("load", () => {
+    current = index;
 
     handleVideos();
 
-    setTimeout(() => {
+}
 
-        firstText.style.opacity = "1";
+/* AUTO */
+function nextSlide(){
 
-    }, 250);
+    let next =
+    current + 1;
 
-    startAutoScroll();
+    if(next >= reels.length){
 
-});
+        next = 0;
+
+    }
+
+    showSlide(next);
+
+}
+
+setInterval(nextSlide, 3500);
 
 /* TOUCH */
 let startY = 0;
@@ -472,8 +357,6 @@ window.addEventListener(
 
         startY =
         e.touches[0].clientY;
-
-        autoPaused = true;
 
     },
     { passive:true }
@@ -489,50 +372,34 @@ window.addEventListener(
 
         if(Math.abs(diff) > 50){
 
-            if(diff > 0){
+            if(diff < 0){
 
-                go(index - 1);
+                nextSlide();
 
             }else{
 
-                go(index + 1);
+                let prev =
+                current - 1;
+
+                if(prev < 0){
+
+                    prev =
+                    reels.length - 1;
+
+                }
+
+                showSlide(prev);
 
             }
 
         }
 
-        setTimeout(() => {
-
-            autoPaused = false;
-
-        }, 1200);
-
     },
     { passive:true }
 );
 
-/* RESTART */
-window.addEventListener("click", () => {
-
-    if(index === reels.length - 1){
-
-        go(0);
-
-    }
-
-});
-
-/* MOBILE RESIZE FIX */
-window.addEventListener("resize", () => {
-
-    track.style.transform =
-    `translate3d(
-        0,
-        -${index * window.innerHeight}px,
-        0
-    )`;
-
-});
+/* START */
+handleVideos();
 
 </script>
 
