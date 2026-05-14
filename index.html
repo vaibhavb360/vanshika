@@ -83,6 +83,7 @@ body{
     text-align:center;
     padding:25px;
     text-shadow:0 2px 12px rgba(0,0,0,0.8);
+    animation:fadeIn 1.2s ease;
 }
 
 .content h1{
@@ -91,6 +92,7 @@ body{
 
 .content p{
     font-size:1.4rem;
+    line-height:1.5;
 }
 
 .end-content{
@@ -101,9 +103,26 @@ body{
     gap:12px;
 }
 
+/* FADE ANIMATION */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
 @media(max-width:768px){
-    .content h1{font-size:2.4rem;}
-    .content p{font-size:1.1rem;}
+    .content h1{
+        font-size:2.4rem;
+    }
+
+    .content p{
+        font-size:1.1rem;
+    }
 }
 
 </style>
@@ -114,35 +133,93 @@ body{
 <div class="wrapper">
     <div class="track" id="track">
 
+        <!-- OPENING -->
         <div class="reel">
-            <video muted playsinline autoplay loop>
-                <source src="Memory1.mp4">
+
+            <video
+                id="firstVideo"
+                muted
+                playsinline
+                autoplay
+                loop
+                preload="auto"
+                poster="poster.jpg">
+
+                <source src="Memory1.mp4" type="video/mp4">
+
             </video>
+
             <div class="content">
                 <h1>I'm Sorry</h1>
                 <p>I know I hurt you.</p>
                 <p>And I regret it deeply.</p>
             </div>
+
         </div>
 
-        <div class="reel"><img src="1.jpeg"><div class="content"><p>Some memories never really leave
-</p></div></div>
-        <div class="reel"><img class="fit-contain" src="2.jpeg"><div class="content"><p>I wish I handled things better</p></div></div>
-        <div class="reel"><img class="fit-contain" src="3.jpeg"><div class="content"><p>I didn’t realize how much you meant to me until everything changed
-</p></div></div>
-        <div class="reel"><img src="4.jpeg"><div class="content"><p>Every moment still stays with me</p></div></div>
-        <div class="reel"><img src="5.jpeg"><div class="content"><p>I miss how things used to be</p></div></div>
-        <div class="reel"><img src="6.jpeg"><div class="content"><p>I hope you're doing okay</p></div></div>
+        <!-- SLIDES -->
 
         <div class="reel">
-            <video muted playsinline autoplay loop>
-                <source src="memory3.mp4">
+            <img loading="lazy" src="1.jpeg">
+            <div class="content">
+                <p>Some memories never really leave</p>
+            </div>
+        </div>
+
+        <div class="reel">
+            <img loading="lazy" class="fit-contain" src="2.jpeg">
+            <div class="content">
+                <p>I wish I understood your feelings better</p>
+            </div>
+        </div>
+
+        <div class="reel">
+            <img loading="lazy" class="fit-contain" src="3.jpeg">
+            <div class="content">
+                <p>I didn’t realize how much you meant to me until everything changed</p>
+            </div>
+        </div>
+
+        <div class="reel">
+            <img loading="lazy" src="4.jpeg">
+            <div class="content">
+                <p>Some moments still feel frozen in time</p>
+            </div>
+        </div>
+
+        <div class="reel">
+            <img loading="lazy" src="5.jpeg">
+            <div class="content">
+                <p>I miss how easy it felt to be around you</p>
+            </div>
+        </div>
+
+        <div class="reel">
+            <img loading="lazy" src="6.jpeg">
+            <div class="content">
+                <p>I hope you're doing okay</p>
+            </div>
+        </div>
+
+        <!-- ENDING -->
+        <div class="reel">
+
+            <video
+                muted
+                playsinline
+                autoplay
+                loop
+                preload="metadata">
+
+                <source src="memory3.mp4" type="video/mp4">
+
             </video>
 
             <div class="content end-content">
                 <h1>If you ever feel like talking again…</h1>
-                <p>I’ll be here.</p>
+                <p>I’ll be here quietly.</p>
             </div>
+
         </div>
 
     </div>
@@ -152,10 +229,24 @@ body{
 
 const track = document.getElementById("track");
 const reels = document.querySelectorAll(".reel");
+const firstVideo = document.getElementById("firstVideo");
 
 let index = 0;
 let locked = false;
 let autoPaused = false;
+
+/* FORCE VIDEO PLAY */
+window.addEventListener("load", async () => {
+
+    try{
+        firstVideo.muted = true;
+        await firstVideo.play();
+    }catch(err){
+        console.log(err);
+    }
+
+    go(0);
+});
 
 /* MOVE FUNCTION */
 function go(i){
@@ -171,8 +262,9 @@ function go(i){
     }, 800);
 }
 
-/* AUTO SCROLL (forward only) */
+/* AUTO SCROLL */
 function next(){
+
     if(locked || autoPaused) return;
 
     if(index < reels.length - 1){
@@ -182,11 +274,13 @@ function next(){
 
 setInterval(next, 3500);
 
-/* VERTICAL SWIPE */
+/* SWIPE */
 let startY = 0;
 
 window.addEventListener("touchstart", (e) => {
+
     startY = e.touches[0].clientY;
+
     autoPaused = true;
 });
 
@@ -194,29 +288,23 @@ window.addEventListener("touchend", (e) => {
 
     let diff = e.changedTouches[0].clientY - startY;
 
-    if(Math.abs(diff) > 40){
+    if(Math.abs(diff) > 60 && !locked){
 
         if(diff > 0){
-            go(index - 1); // swipe DOWN → back
-        } else {
-            go(index + 1); // swipe UP → forward
+            go(index - 1);
+        }else{
+            go(index + 1);
         }
     }
-
-    setTimeout(() => {
-        autoPaused = false;
-    }, 1000);
 });
 
-/* TAP RESTART AT END */
+/* RESTART */
 window.addEventListener("click", () => {
+
     if(index === reels.length - 1){
         go(0);
     }
 });
-
-/* INIT */
-window.onload = () => go(0);
 
 </script>
 
