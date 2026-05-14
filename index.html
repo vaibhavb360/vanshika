@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,7 @@
 }
 
 body{
-    font-family:'Inter', sans-serif;
+    font-family:'Poppins', sans-serif;
     background:black;
     overflow:hidden;
 }
@@ -210,19 +210,16 @@ window.addEventListener("load", () => {
     firstVideo.muted = true;
     firstVideo.playsInline = true;
 
-    /* try immediate play (no await delay) */
     const playPromise = firstVideo.play();
 
     if (playPromise !== undefined) {
         playPromise.catch(() => {
-            // fallback (some browsers block autoplay briefly)
             document.addEventListener("click", () => {
                 firstVideo.play();
             }, { once: true });
         });
     }
 
-    /* show text slightly early but not too early */
     setTimeout(() => {
         firstText.style.opacity = "1";
     }, 150);
@@ -230,7 +227,6 @@ window.addEventListener("load", () => {
     go(0);
 });
 
-/* MOVE FUNCTION */
 function go(i){
 
     index = Math.max(0, Math.min(i, reels.length - 1));
@@ -244,7 +240,6 @@ function go(i){
     }, 800);
 }
 
-/* AUTO SCROLL */
 function next(){
     if(locked || autoPaused) return;
 
@@ -255,7 +250,6 @@ function next(){
 
 setInterval(next, 3500);
 
-/* SWIPE */
 let startY = 0;
 
 window.addEventListener("touchstart", (e) => {
@@ -281,7 +275,6 @@ window.addEventListener("touchend", (e) => {
     }, 1000);
 });
 
-/* TAP RESTART AT END */
 window.addEventListener("click", () => {
     if(index === reels.length - 1){
         go(0);
