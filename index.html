@@ -32,7 +32,7 @@ body{
     touch-action:manipulation;
 }
 
-/* FULLSCREEN WRAPPER */
+/* FULLSCREEN */
 .wrapper{
     position:fixed;
     inset:0;
@@ -40,8 +40,11 @@ body{
     width:100%;
     height:100%;
 
-    background:black;
     overflow:hidden;
+    background:black;
+
+    opacity:0;
+    transition:opacity 0.8s ease;
 }
 
 /* VIDEO */
@@ -56,6 +59,9 @@ video{
     object-position:center;
 
     background:black;
+
+    opacity:1;
+    visibility:visible;
 
     z-index:1;
 }
@@ -75,7 +81,7 @@ video{
     z-index:2;
 }
 
-/* TEXT */
+/* CONTENT */
 .content{
     position:absolute;
     inset:0;
@@ -86,9 +92,9 @@ video{
     align-items:center;
     justify-content:center;
 
-    padding:30px;
-
     text-align:center;
+
+    padding:30px;
 
     color:white;
 
@@ -98,10 +104,10 @@ video{
     "Segoe UI",
     sans-serif;
 
-    z-index:3;
-
     text-shadow:
     0 2px 12px rgba(0,0,0,0.9);
+
+    z-index:3;
 }
 
 .content h1{
@@ -180,14 +186,13 @@ video{
         webkit-playsinline
         preload="auto">
 
-        <!-- REPLACE WITH FINAL VIDEO -->
         <source
         src="final.mp4"
         type="video/mp4">
 
     </video>
 
-    <!-- DARK OVERLAY -->
+    <!-- OVERLAY -->
     <div class="overlay"></div>
 
     <!-- TEXT -->
@@ -217,38 +222,54 @@ video{
 const video =
 document.getElementById("video");
 
-/* FORCE VIDEO PLAY */
-function forcePlay(){
+const wrapper =
+document.querySelector(".wrapper");
 
-    const playPromise =
-    video.play();
+let started = false;
 
-    if(playPromise !== undefined){
+/* START VIDEO */
+async function startVideo(){
 
-        playPromise
-        .then(() => {
+    if(started) return;
 
-            console.log("Video playing");
+    try{
 
-        })
-        .catch(() => {
+        video.muted = true;
 
-            console.log("Autoplay blocked");
+        await video.play();
 
-        });
+        started = true;
+
+        /* SHOW PAGE ONLY AFTER VIDEO STARTS */
+        wrapper.style.opacity = "1";
+
+        console.log("Video started");
+
+    }catch(err){
+
+        console.log("Autoplay blocked");
 
     }
 
 }
+
+/* WAIT UNTIL READY */
+video.addEventListener(
+    "canplay",
+    () => {
+
+        startVideo();
+
+    },
+    { once:true }
+);
 
 /* LOAD */
 window.addEventListener(
     "load",
     () => {
 
-        video.muted = true;
-
-        forcePlay();
+        video.load();
 
     }
 );
@@ -256,36 +277,42 @@ window.addEventListener(
 /* INSTAGRAM FIX */
 document.addEventListener(
     "touchstart",
-    forcePlay,
+    startVideo,
     { once:true }
 );
 
 document.addEventListener(
     "click",
-    forcePlay,
+    startVideo,
     { once:true }
 );
 
-/* PAGE VISIBILITY FIX */
+/* RESUME PLAYBACK */
 document.addEventListener(
     "visibilitychange",
     () => {
 
         if(!document.hidden){
 
-            forcePlay();
+            video.play()
+            .catch(() => {});
 
         }
 
     }
 );
 
-/* PREVENT PAUSE */
+/* PREVENT RANDOM PAUSE */
 video.addEventListener(
     "pause",
     () => {
 
-        forcePlay();
+        if(!document.hidden){
+
+            video.play()
+            .catch(() => {});
+
+        }
 
     }
 );
