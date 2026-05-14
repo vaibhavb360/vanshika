@@ -6,13 +6,9 @@
 
 <meta
 name="viewport"
-content="width=device-width, initial-scale=1.0">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>I'm Sorry Vanshu</title>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-rel="stylesheet">
 
 <style>
 
@@ -28,49 +24,28 @@ body{
     height:100%;
     overflow:hidden;
     background:black;
-    font-family:'Poppins',sans-serif;
+
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    user-select:none;
+
+    touch-action:manipulation;
 }
 
-/* WRAPPER */
+/* FULLSCREEN WRAPPER */
 .wrapper{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-}
-
-/* REELS */
-.reel{
-    position:absolute;
+    position:fixed;
     inset:0;
 
     width:100%;
     height:100%;
 
-    opacity:0;
-    visibility:hidden;
-
-    transition:
-    opacity 1s ease;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    overflow:hidden;
     background:black;
+    overflow:hidden;
 }
 
-/* ACTIVE */
-.reel.active{
-    opacity:1;
-    visibility:visible;
-    z-index:2;
-}
-
-/* MEDIA */
-.reel img,
-.reel video{
+/* VIDEO */
+video{
     position:absolute;
     inset:0;
 
@@ -80,18 +55,13 @@ body{
     object-fit:cover;
     object-position:center;
 
-    z-index:-2;
-}
-
-/* CONTAIN */
-.fit-contain{
-    object-fit:contain !important;
     background:black;
+
+    z-index:1;
 }
 
 /* OVERLAY */
-.reel::after{
-    content:'';
+.overlay{
     position:absolute;
     inset:0;
 
@@ -102,36 +72,90 @@ body{
         rgba(0,0,0,0.75)
     );
 
-    z-index:-1;
+    z-index:2;
 }
 
 /* TEXT */
 .content{
-    color:white;
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:30px;
+
     text-align:center;
-    padding:25px;
+
+    color:white;
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+    z-index:3;
 
     text-shadow:
     0 2px 12px rgba(0,0,0,0.9);
-
-    z-index:3;
 }
 
 .content h1{
     font-size:3rem;
-    margin-bottom:10px;
+    margin-bottom:14px;
 }
 
 .content p{
     font-size:1.2rem;
-    line-height:1.5;
+    line-height:1.6;
+}
+
+/* TAP MESSAGE */
+.tap-message{
+    position:absolute;
+
+    bottom:28px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    color:white;
+
+    font-size:14px;
+    font-family:sans-serif;
+
+    opacity:0.75;
+
+    z-index:5;
+
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        opacity:0.3;
+    }
+
+    50%{
+        opacity:0.9;
+    }
+
+    100%{
+        opacity:0.3;
+    }
+
 }
 
 /* MOBILE */
 @media(max-width:768px){
 
     .content h1{
-        font-size:2.2rem;
+        font-size:2.1rem;
     }
 
     .content p{
@@ -147,259 +171,124 @@ body{
 
 <div class="wrapper">
 
-    <!-- REEL 1 -->
-    <div class="reel active">
+    <!-- VIDEO -->
+    <video
+        id="video"
+        muted
+        autoplay
+        playsinline
+        webkit-playsinline
+        preload="auto">
 
-        <video
-            muted
-            autoplay
-            loop
-            playsinline
-            preload="auto">
+        <!-- REPLACE WITH FINAL VIDEO -->
+        <source
+        src="final.mp4"
+        type="video/mp4">
 
-            <source
-            src="Memory11.mp4"
-            type="video/mp4">
+    </video>
 
-        </video>
+    <!-- DARK OVERLAY -->
+    <div class="overlay"></div>
 
-        <div class="content">
+    <!-- TEXT -->
+    <div class="content">
 
-            <h1>I'm Sorry</h1>
+        <h1>I'm Sorry</h1>
 
-            <p>I know I hurt you.</p>
+        <p>
+            I know I hurt you.
+        </p>
 
-            <p>And I regret it deeply.</p>
-
-        </div>
-
-    </div>
-
-    <!-- REEL 2 -->
-    <div class="reel">
-
-        <img src="1.jpeg">
-
-        <div class="content">
-            <p>Some memories don't really fade</p>
-        </div>
+        <p>
+            And I regret it deeply.
+        </p>
 
     </div>
 
-    <!-- REEL 3 -->
-    <div class="reel">
-
-        <img
-        class="fit-contain"
-        src="2.jpeg">
-
-        <div class="content">
-            <p>I wish I handled things better</p>
-        </div>
-
-    </div>
-
-    <!-- REEL 4 -->
-    <div class="reel">
-
-        <img
-        class="fit-contain"
-        src="3.jpeg">
-
-        <div class="content">
-            <p>
-                I didn’t realize how much you meant
-                to me until everything changed
-            </p>
-        </div>
-
-    </div>
-
-    <!-- REEL 5 -->
-    <div class="reel">
-
-        <img src="4.jpeg">
-
-        <div class="content">
-            <p>You were never just an option to me</p>
-        </div>
-
-    </div>
-
-    <!-- REEL 6 -->
-    <div class="reel">
-
-        <img src="5.jpeg">
-
-        <div class="content">
-            <p>I miss how things used to be</p>
-        </div>
-
-    </div>
-
-    <!-- REEL 7 -->
-    <div class="reel">
-
-        <img src="6.jpeg">
-
-        <div class="content">
-            <p>I hope you're doing okay</p>
-        </div>
-
-    </div>
-
-    <!-- FINAL -->
-    <div class="reel">
-
-        <video
-            muted
-            autoplay
-            loop
-            playsinline
-            preload="auto">
-
-            <source
-            src="memory33.mp4"
-            type="video/mp4">
-
-        </video>
-
-        <div class="content">
-
-            <h1>
-                If you ever feel like talking again...
-            </h1>
-
-            <p>I’ll be here</p>
-
-        </div>
-
+    <!-- TAP MESSAGE -->
+    <div class="tap-message">
+        Tap anywhere if video doesn't start
     </div>
 
 </div>
 
 <script>
 
-const reels =
-document.querySelectorAll(".reel");
+const video =
+document.getElementById("video");
 
-const videos =
-document.querySelectorAll("video");
+/* FORCE VIDEO PLAY */
+function forcePlay(){
 
-let current = 0;
+    const playPromise =
+    video.play();
 
-/* PLAY ACTIVE VIDEO */
-function handleVideos(){
+    if(playPromise !== undefined){
 
-    videos.forEach(video => {
+        playPromise
+        .then(() => {
 
-        video.pause();
+            console.log("Video playing");
 
-    });
+        })
+        .catch(() => {
 
-    const active =
-    reels[current];
+            console.log("Autoplay blocked");
 
-    const activeVideo =
-    active.querySelector("video");
-
-    if(activeVideo){
-
-        activeVideo.play()
-        .catch(() => {});
+        });
 
     }
 
 }
 
-/* SHOW REEL */
-function showSlide(index){
-
-    reels.forEach(reel => {
-
-        reel.classList.remove("active");
-
-    });
-
-    reels[index]
-    .classList.add("active");
-
-    current = index;
-
-    handleVideos();
-
-}
-
-/* AUTO */
-function nextSlide(){
-
-    let next =
-    current + 1;
-
-    if(next >= reels.length){
-
-        next = 0;
-
-    }
-
-    showSlide(next);
-
-}
-
-setInterval(nextSlide, 3500);
-
-/* TOUCH */
-let startY = 0;
-
+/* LOAD */
 window.addEventListener(
-    "touchstart",
-    (e) => {
+    "load",
+    () => {
 
-        startY =
-        e.touches[0].clientY;
+        video.muted = true;
 
-    },
-    { passive:true }
+        forcePlay();
+
+    }
 );
 
-window.addEventListener(
-    "touchend",
-    (e) => {
+/* INSTAGRAM FIX */
+document.addEventListener(
+    "touchstart",
+    forcePlay,
+    { once:true }
+);
 
-        let diff =
-        e.changedTouches[0].clientY
-        - startY;
+document.addEventListener(
+    "click",
+    forcePlay,
+    { once:true }
+);
 
-        if(Math.abs(diff) > 50){
+/* PAGE VISIBILITY FIX */
+document.addEventListener(
+    "visibilitychange",
+    () => {
 
-            if(diff < 0){
+        if(!document.hidden){
 
-                nextSlide();
-
-            }else{
-
-                let prev =
-                current - 1;
-
-                if(prev < 0){
-
-                    prev =
-                    reels.length - 1;
-
-                }
-
-                showSlide(prev);
-
-            }
+            forcePlay();
 
         }
 
-    },
-    { passive:true }
+    }
 );
 
-/* START */
-handleVideos();
+/* PREVENT PAUSE */
+video.addEventListener(
+    "pause",
+    () => {
+
+        forcePlay();
+
+    }
+);
 
 </script>
 
