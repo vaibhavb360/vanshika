@@ -100,7 +100,6 @@ body{
     font-size:1.4rem;
 }
 
-/* fade effect */
 #firstText{
     opacity:0;
     transition:opacity 1s ease;
@@ -205,18 +204,28 @@ let index = 0;
 let locked = false;
 let autoPaused = false;
 
-/* INIT */
-window.addEventListener("load", async () => {
+/* 🚀 INSTANT VIDEO START */
+window.addEventListener("load", () => {
 
-    try {
-        firstVideo.muted = true;
-        await firstVideo.play();
-    } catch (e) {}
+    firstVideo.muted = true;
+    firstVideo.playsInline = true;
 
-    /* ✅ SHOW TEXT IMMEDIATELY */
+    /* try immediate play (no await delay) */
+    const playPromise = firstVideo.play();
+
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // fallback (some browsers block autoplay briefly)
+            document.addEventListener("click", () => {
+                firstVideo.play();
+            }, { once: true });
+        });
+    }
+
+    /* show text slightly early but not too early */
     setTimeout(() => {
         firstText.style.opacity = "1";
-    }, 200); // very quick appearance after load
+    }, 150);
 
     go(0);
 });
