@@ -6,6 +6,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
 
 <title>I'm Sorry Vanshu</title>
 
@@ -17,6 +18,10 @@
     box-sizing:border-box;
 }
 
+html, body{
+    height:100%;
+}
+
 body{
     font-family:'Poppins', sans-serif;
     background:black;
@@ -25,7 +30,7 @@ body{
 
 /* VIEWPORT */
 .wrapper{
-    height:100vh;
+    height:100dvh;
     width:100vw;
     overflow:hidden;
 }
@@ -39,7 +44,7 @@ body{
 
 /* SLIDES */
 .reel{
-    height:100vh;
+    height:100dvh;
     width:100vw;
     position:relative;
     display:flex;
@@ -203,22 +208,35 @@ const firstText = document.getElementById("firstText");
 let index = 0;
 let locked = false;
 let autoPaused = false;
+let autoPauseTimer;
 
-/* 🚀 INSTANT VIDEO START */
+/* FIX 1: mobile vh issue */
+function setVH(){
+    document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+}
+window.addEventListener('resize', setVH);
+setVH();
+
+/* FIX 2: safer video autoplay */
+function tryPlayVideo(){
+    const playPromise = firstVideo.play();
+
+    if(playPromise !== undefined){
+        playPromise.catch(() => {
+            document.addEventListener("touchstart", () => {
+                firstVideo.play();
+            }, { once: true });
+        });
+    }
+}
+
+/* START */
 window.addEventListener("load", () => {
 
     firstVideo.muted = true;
     firstVideo.playsInline = true;
 
-    const playPromise = firstVideo.play();
-
-    if (playPromise !== undefined) {
-        playPromise.catch(() => {
-            document.addEventListener("click", () => {
-                firstVideo.play();
-            }, { once: true });
-        });
-    }
+    tryPlayVideo();
 
     setTimeout(() => {
         firstText.style.opacity = "1";
@@ -227,13 +245,14 @@ window.addEventListener("load", () => {
     go(0);
 });
 
+/* SLIDE CONTROL */
 function go(i){
 
     index = Math.max(0, Math.min(i, reels.length - 1));
 
     locked = true;
 
-    track.style.transform = `translateY(-${index * 100}vh)`;
+    track.style.transform = `translateY(-${index * 100}dvh)`;
 
     setTimeout(() => {
         locked = false;
@@ -250,18 +269,20 @@ function next(){
 
 setInterval(next, 3500);
 
+/* TOUCH SUPPORT */
 let startY = 0;
 
 window.addEventListener("touchstart", (e) => {
     startY = e.touches[0].clientY;
     autoPaused = true;
-});
+    clearTimeout(autoPauseTimer);
+}, { passive:true });
 
 window.addEventListener("touchend", (e) => {
 
     let diff = e.changedTouches[0].clientY - startY;
 
-    if(Math.abs(diff) > 40){
+    if(Math.abs(diff) > 80){
 
         if(diff > 0){
             go(index - 1);
@@ -270,11 +291,12 @@ window.addEventListener("touchend", (e) => {
         }
     }
 
-    setTimeout(() => {
+    autoPauseTimer = setTimeout(() => {
         autoPaused = false;
-    }, 1000);
+    }, 2000);
 });
 
+/* restart on end */
 window.addEventListener("click", () => {
     if(index === reels.length - 1){
         go(0);
