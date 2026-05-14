@@ -61,21 +61,15 @@ body{
     z-index:-2;
 }
 
-/* =========================
-   ZOOM EFFECT (FIXED)
-========================= */
-
-/* Images → slow zoom IN */
+/* ZOOM EFFECT */
 .reel img{
     animation: zoomIn 12s ease-in-out forwards;
 }
 
-/* Videos → slow zoom OUT */
 .reel video{
     animation: zoomOut 12s ease-in-out forwards;
 }
 
-/* Image containment option */
 .reel img.fit-contain{
     object-fit:contain;
     background:black;
@@ -106,6 +100,12 @@ body{
     font-size:1.4rem;
 }
 
+/* fade effect */
+#firstText{
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
 .end-content{
     display:flex;
     flex-direction:column;
@@ -116,21 +116,13 @@ body{
 
 /* ZOOM ANIMATIONS */
 @keyframes zoomIn{
-    from{
-        transform:scale(1);
-    }
-    to{
-        transform:scale(1.08);
-    }
+    from{ transform:scale(1); }
+    to{ transform:scale(1.08); }
 }
 
 @keyframes zoomOut{
-    from{
-        transform:scale(1.08);
-    }
-    to{
-        transform:scale(1);
-    }
+    from{ transform:scale(1.08); }
+    to{ transform:scale(1); }
 }
 
 @media(max-width:768px){
@@ -221,16 +213,12 @@ window.addEventListener("load", async () => {
         await firstVideo.play();
     } catch (e) {}
 
-    go(0);
-});
-
-/* FIX: TEXT ONLY AFTER VIDEO ACTUALLY PLAYS */
-firstVideo.addEventListener("playing", () => {
-
+    /* ✅ SHOW TEXT IMMEDIATELY */
     setTimeout(() => {
         firstText.style.opacity = "1";
-    }, 700);
+    }, 200); // very quick appearance after load
 
+    go(0);
 });
 
 /* MOVE FUNCTION */
