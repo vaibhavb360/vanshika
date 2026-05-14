@@ -9,6 +9,10 @@
 
 <title>I'm Sorry Vanshu</title>
 
+<!-- PRELOAD -->
+<link rel="preload" as="video" href="Memory1.mp4">
+<link rel="preload" as="image" href="1.jpeg">
+
 <style>
 
 *{
@@ -21,11 +25,15 @@ body{
     font-family:'Poppins', sans-serif;
     background:black;
     overflow:hidden;
+
+    /* INSTAGRAM FIXES */
+    overscroll-behavior:none;
+    touch-action:pan-y;
 }
 
 /* VIEWPORT */
 .wrapper{
-    height:100vh;
+    height:100dvh;
     width:100vw;
     overflow:hidden;
 }
@@ -39,7 +47,7 @@ body{
 
 /* SLIDES */
 .reel{
-    height:100vh;
+    height:100dvh;
     width:100vw;
     position:relative;
     display:flex;
@@ -138,7 +146,16 @@ body{
     <div class="track" id="track">
 
         <div class="reel">
-            <video id="firstVideo" muted playsinline autoplay loop preload="auto">
+
+            <video
+                id="firstVideo"
+                muted
+                playsinline
+                webkit-playsinline
+                autoplay
+                loop
+                preload="auto">
+
                 <source src="Memory1.mp4">
             </video>
 
@@ -151,36 +168,56 @@ body{
 
         <div class="reel">
             <img src="1.jpeg">
-            <div class="content"><p>Some memories don't really fade</p></div>
+            <div class="content">
+                <p>Some memories don't really fade</p>
+            </div>
         </div>
 
         <div class="reel">
             <img class="fit-contain" src="2.jpeg">
-            <div class="content"><p>I wish I handled things better</p></div>
+            <div class="content">
+                <p>I wish I handled things better</p>
+            </div>
         </div>
 
         <div class="reel">
             <img class="fit-contain" src="3.jpeg">
-            <div class="content"><p>I didn’t realize how much you meant to me until everything changed</p></div>
+            <div class="content">
+                <p>I didn’t realize how much you meant to me until everything changed</p>
+            </div>
         </div>
 
         <div class="reel">
             <img src="4.jpeg">
-            <div class="content"><p>You were never just an option to me</p></div>
+            <div class="content">
+                <p>You were never just an option to me</p>
+            </div>
         </div>
 
         <div class="reel">
             <img src="5.jpeg">
-            <div class="content"><p>I miss how things used to be</p></div>
+            <div class="content">
+                <p>I miss how things used to be</p>
+            </div>
         </div>
 
         <div class="reel">
             <img src="6.jpeg">
-            <div class="content"><p>I hope you're doing okay</p></div>
+            <div class="content">
+                <p>I hope you're doing okay</p>
+            </div>
         </div>
 
         <div class="reel">
-            <video muted playsinline autoplay loop>
+
+            <video
+                muted
+                playsinline
+                webkit-playsinline
+                autoplay
+                loop
+                preload="auto">
+
                 <source src="memory3.mp4">
             </video>
 
@@ -213,10 +250,13 @@ window.addEventListener("load", () => {
     const playPromise = firstVideo.play();
 
     if (playPromise !== undefined) {
+
         playPromise.catch(() => {
+
             document.addEventListener("click", () => {
                 firstVideo.play();
             }, { once: true });
+
         });
     }
 
@@ -233,7 +273,7 @@ function go(i){
 
     locked = true;
 
-    track.style.transform = `translateY(-${index * 100}vh)`;
+    track.style.transform = `translateY(-${index * 100}dvh)`;
 
     setTimeout(() => {
         locked = false;
@@ -241,6 +281,7 @@ function go(i){
 }
 
 function next(){
+
     if(locked || autoPaused) return;
 
     if(index < reels.length - 1){
@@ -253,8 +294,10 @@ setInterval(next, 3500);
 let startY = 0;
 
 window.addEventListener("touchstart", (e) => {
+
     startY = e.touches[0].clientY;
     autoPaused = true;
+
 });
 
 window.addEventListener("touchend", (e) => {
@@ -276,9 +319,11 @@ window.addEventListener("touchend", (e) => {
 });
 
 window.addEventListener("click", () => {
+
     if(index === reels.length - 1){
         go(0);
     }
+
 });
 
 </script>
