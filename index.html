@@ -26,13 +26,13 @@ body{
     background:black;
     overflow:hidden;
 
-    /* INSTAGRAM FIXES */
     overscroll-behavior:none;
     touch-action:pan-y;
 }
 
 /* VIEWPORT */
 .wrapper{
+    height:100vh;
     height:100dvh;
     width:100vw;
     overflow:hidden;
@@ -42,11 +42,12 @@ body{
 .track{
     height:100%;
     width:100%;
-    transition: transform 0.9s ease;
+    transition:transform 0.9s ease;
 }
 
 /* SLIDES */
 .reel{
+    height:100vh;
     height:100dvh;
     width:100vw;
     position:relative;
@@ -71,11 +72,11 @@ body{
 
 /* ZOOM EFFECT */
 .reel img{
-    animation: zoomIn 12s ease-in-out forwards;
+    animation:zoomIn 12s ease-in-out forwards;
 }
 
 .reel video{
-    animation: zoomOut 12s ease-in-out forwards;
+    animation:zoomOut 12s ease-in-out forwards;
 }
 
 .reel img.fit-contain{
@@ -88,7 +89,7 @@ body{
     content:'';
     position:absolute;
     inset:0;
-    background: radial-gradient(circle, rgba(0,0,0,0.2), rgba(0,0,0,0.75));
+    background:radial-gradient(circle, rgba(0,0,0,0.2), rgba(0,0,0,0.75));
     z-index:-1;
 }
 
@@ -133,8 +134,13 @@ body{
 }
 
 @media(max-width:768px){
-    .content h1{font-size:2.4rem;}
-    .content p{font-size:1.1rem;}
+    .content h1{
+        font-size:2.4rem;
+    }
+
+    .content p{
+        font-size:1.1rem;
+    }
 }
 
 </style>
@@ -143,6 +149,7 @@ body{
 <body>
 
 <div class="wrapper">
+
     <div class="track" id="track">
 
         <!-- FIRST REEL -->
@@ -151,11 +158,13 @@ body{
             <video
                 id="firstVideo"
                 muted
-                playsinline
-                webkit-playsinline
                 autoplay
                 loop
-                preload="metadata">
+                playsinline
+                webkit-playsinline
+                x5-playsinline
+                x5-video-player-type="h5"
+                preload="auto">
 
                 <source src="Memory1.mp4" type="video/mp4">
 
@@ -170,6 +179,7 @@ body{
         </div>
 
         <!-- IMAGE REELS -->
+
         <div class="reel">
             <img src="1.jpeg">
             <div class="content">
@@ -213,15 +223,18 @@ body{
         </div>
 
         <!-- FINAL VIDEO REEL -->
+
         <div class="reel">
 
             <video
                 muted
-                playsinline
-                webkit-playsinline
                 autoplay
                 loop
-                preload="metadata">
+                playsinline
+                webkit-playsinline
+                x5-playsinline
+                x5-video-player-type="h5"
+                preload="auto">
 
                 <source src="memory3.mp4" type="video/mp4">
 
@@ -235,6 +248,7 @@ body{
         </div>
 
     </div>
+
 </div>
 
 <script>
@@ -250,23 +264,40 @@ let index = 0;
 let locked = false;
 let autoPaused = false;
 
+/* PRELOAD VIDEOS */
+videos.forEach(video => {
+    video.load();
+});
+
 /* HANDLE VIDEO PLAYBACK */
 function handleVideos(){
 
-    videos.forEach((video, i) => {
-
-        /*
-        Only play:
-        - first reel video
-        - final reel video
-        */
+    videos.forEach((video) => {
 
         const parentReel = video.closest(".reel");
         const reelIndex = [...reels].indexOf(parentReel);
 
         if(reelIndex === index){
 
-            video.play().catch(() => {});
+            video.load();
+
+            const playVideo = () => {
+                video.play().catch(() => {});
+            };
+
+            if(video.readyState >= 3){
+
+                playVideo();
+
+            }else{
+
+                video.addEventListener(
+                    "canplay",
+                    playVideo,
+                    { once:true }
+                );
+
+            }
 
         } else {
 
@@ -275,6 +306,7 @@ function handleVideos(){
         }
 
     });
+
 }
 
 /* INITIAL LOAD */
@@ -283,42 +315,33 @@ window.addEventListener("load", () => {
     firstVideo.muted = true;
     firstVideo.playsInline = true;
 
-    const playPromise = firstVideo.play();
-
-    if(playPromise !== undefined){
-
-        playPromise.catch(() => {
-
-            document.addEventListener("click", () => {
-                handleVideos();
-            }, { once:true });
-
-        });
-    }
+    handleVideos();
 
     setTimeout(() => {
         firstText.style.opacity = "1";
-    }, 150);
+    }, 200);
 
-    go(0);
 });
 
 /* CHANGE REELS */
 function go(i){
 
-    index = Math.max(0, Math.min(i, reels.length - 1));
+    index = Math.max(
+        0,
+        Math.min(i, reels.length - 1)
+    );
 
     locked = true;
 
     track.style.transform =
-    `translateY(-${index * 100}dvh)`;
+    `translateY(-${index * 100}vh)`;
 
-    /* IMPORTANT FIX */
     handleVideos();
 
     setTimeout(() => {
         locked = false;
-    }, 800);
+    }, 900);
+
 }
 
 /* AUTO NEXT */
@@ -327,12 +350,27 @@ function next(){
     if(locked || autoPaused) return;
 
     if(index < reels.length - 1){
+
         go(index + 1);
+
     }
+
 }
 
-/* AUTO SCROLL */
-setInterval(next, 3500);
+/* INSTAGRAM SAFER AUTO SCROLL */
+function autoScroll(){
+
+    if(!autoPaused){
+
+        next();
+
+    }
+
+    setTimeout(autoScroll, 3500);
+
+}
+
+autoScroll();
 
 /* TOUCH SUPPORT */
 let startY = 0;
@@ -340,9 +378,10 @@ let startY = 0;
 window.addEventListener("touchstart", (e) => {
 
     startY = e.touches[0].clientY;
+
     autoPaused = true;
 
-});
+}, { passive:true });
 
 window.addEventListener("touchend", (e) => {
 
@@ -358,19 +397,26 @@ window.addEventListener("touchend", (e) => {
         } else {
 
             go(index + 1);
+
         }
+
     }
 
     setTimeout(() => {
         autoPaused = false;
     }, 1000);
-});
 
-/* RESTART */
+}, { passive:true });
+
+/* CLICK TO RESTART */
 window.addEventListener("click", () => {
 
+    handleVideos();
+
     if(index === reels.length - 1){
+
         go(0);
+
     }
 
 });
