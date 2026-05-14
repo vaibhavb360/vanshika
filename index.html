@@ -94,6 +94,18 @@ body{
     text-shadow:0 2px 12px rgba(0,0,0,0.8);
 }
 
+/* 👇 HIDDEN + REVEAL ANIMATION */
+.hidden-text{
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity 1s ease, transform 1s ease;
+}
+
+.show-text{
+    opacity:1;
+    transform:translateY(0);
+}
+
 .content h1{
     font-size:3rem;
 }
@@ -143,10 +155,11 @@ body{
     <div class="track" id="track">
 
         <div class="reel">
-            <video muted playsinline autoplay loop>
+            <video id="firstVideo" muted playsinline autoplay loop>
                 <source src="Memory1.mp4">
             </video>
-            <div class="content">
+
+            <div class="content hidden-text" id="firstText">
                 <h1>I'm Sorry</h1>
                 <p>I know I hurt you.</p>
                 <p>And I regret it deeply.</p>
@@ -202,9 +215,30 @@ body{
 const track = document.getElementById("track");
 const reels = document.querySelectorAll(".reel");
 
+const firstVideo = document.getElementById("firstVideo");
+const firstText = document.getElementById("firstText");
+
 let index = 0;
 let locked = false;
 let autoPaused = false;
+
+/* INIT + VIDEO SYNC TEXT */
+window.addEventListener("load", async () => {
+
+    try {
+        firstVideo.muted = true;
+        await firstVideo.play();
+    } catch (e) {}
+
+    go(0);
+});
+
+/* SHOW TEXT ONLY WHEN VIDEO STARTS */
+firstVideo.addEventListener("playing", () => {
+    setTimeout(() => {
+        firstText.classList.add("show-text");
+    }, 600);
+});
 
 /* MOVE FUNCTION */
 function go(i){
@@ -263,9 +297,6 @@ window.addEventListener("click", () => {
         go(0);
     }
 });
-
-/* INIT */
-window.onload = () => go(0);
 
 </script>
 
