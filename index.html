@@ -33,6 +33,7 @@ body{
     height:100dvh;
     width:100vw;
     overflow:hidden;
+    touch-action:none;
 }
 
 /* TRACK */
@@ -130,8 +131,14 @@ body{
 }
 
 @media(max-width:768px){
-    .content h1{font-size:2.4rem;}
-    .content p{font-size:1.1rem;}
+
+    .content h1{
+        font-size:2.4rem;
+    }
+
+    .content p{
+        font-size:1.1rem;
+    }
 }
 
 </style>
@@ -142,9 +149,18 @@ body{
 <div class="wrapper">
     <div class="track" id="track">
 
+        <!-- FIRST REEL -->
         <div class="reel">
-            <video id="firstVideo" muted playsinline autoplay loop preload="auto">
-                <source src="Memory1.mp4">
+
+            <video id="firstVideo"
+                   muted
+                   playsinline
+                   autoplay
+                   loop
+                   preload="auto">
+
+                <source src="Memory1.mp4" type="video/mp4">
+
             </video>
 
             <div class="content" id="firstText">
@@ -152,47 +168,69 @@ body{
                 <p>I know I hurt you.</p>
                 <p>And I regret it deeply.</p>
             </div>
+
         </div>
 
+        <!-- REEL 2 -->
         <div class="reel">
-            <img src="1.jpeg">
-            <div class="content"><p>Some memories don't really fade</p></div>
+            <img src="1.jpeg" alt="">
+            <div class="content">
+                <p>Some memories don't really fade</p>
+            </div>
         </div>
 
+        <!-- REEL 3 -->
         <div class="reel">
-            <img class="fit-contain" src="2.jpeg">
-            <div class="content"><p>I wish I handled things better</p></div>
+            <img class="fit-contain" src="2.jpeg" alt="">
+            <div class="content">
+                <p>I wish I handled things better</p>
+            </div>
         </div>
 
+        <!-- REEL 4 -->
         <div class="reel">
-            <img class="fit-contain" src="3.jpeg">
-            <div class="content"><p>I didn’t realize how much you meant to me until everything changed</p></div>
+            <img class="fit-contain" src="3.jpeg" alt="">
+            <div class="content">
+                <p>I didn’t realize how much you meant to me until everything changed</p>
+            </div>
         </div>
 
+        <!-- REEL 5 -->
         <div class="reel">
-            <img src="4.jpeg">
-            <div class="content"><p>You were never just an option to me</p></div>
+            <img src="4.jpeg" alt="">
+            <div class="content">
+                <p>You were never just an option to me</p>
+            </div>
         </div>
 
+        <!-- REEL 6 -->
         <div class="reel">
-            <img src="5.jpeg">
-            <div class="content"><p>I miss how things used to be</p></div>
+            <img src="5.jpeg" alt="">
+            <div class="content">
+                <p>I miss how things used to be</p>
+            </div>
         </div>
 
+        <!-- REEL 7 -->
         <div class="reel">
-            <img src="6.jpeg">
-            <div class="content"><p>I hope you're doing okay</p></div>
+            <img src="6.jpeg" alt="">
+            <div class="content">
+                <p>I hope you're doing okay</p>
+            </div>
         </div>
 
+        <!-- LAST REEL -->
         <div class="reel">
-            <video muted playsinline autoplay loop>
-                <source src="memory3.mp4">
+
+            <video muted playsinline autoplay loop preload="auto">
+                <source src="memory3.mp4" type="video/mp4">
             </video>
 
             <div class="content end-content">
                 <h1>If you ever feel like talking again...</h1>
                 <p>I’ll be here</p>
             </div>
+
         </div>
 
     </div>
@@ -209,23 +247,32 @@ let index = 0;
 let locked = false;
 let autoPaused = false;
 let autoPauseTimer;
+let startY = 0;
 
-/* FIX 1: mobile vh issue */
+/* FIX MOBILE HEIGHT */
 function setVH(){
-    document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+    document.documentElement.style.setProperty(
+        '--vh',
+        `${window.innerHeight * 0.01}px`
+    );
 }
-window.addEventListener('resize', setVH);
+
+window.addEventListener("resize", setVH);
 setVH();
 
-/* FIX 2: safer video autoplay */
+/* VIDEO AUTOPLAY FIX */
 function tryPlayVideo(){
+
     const playPromise = firstVideo.play();
 
     if(playPromise !== undefined){
+
         playPromise.catch(() => {
+
             document.addEventListener("touchstart", () => {
                 firstVideo.play();
-            }, { once: true });
+            }, { once:true });
+
         });
     }
 }
@@ -243,23 +290,30 @@ window.addEventListener("load", () => {
     }, 150);
 
     go(0);
+
 });
 
 /* SLIDE CONTROL */
 function go(i){
 
-    index = Math.max(0, Math.min(i, reels.length - 1));
+    index = Math.max(
+        0,
+        Math.min(i, reels.length - 1)
+    );
 
     locked = true;
 
-    track.style.transform = `translateY(-${index * 100}dvh)`;
+    track.style.transform =
+        `translateY(-${index * window.innerHeight}px)`;
 
     setTimeout(() => {
         locked = false;
     }, 800);
 }
 
+/* AUTO NEXT */
 function next(){
+
     if(locked || autoPaused) return;
 
     if(index < reels.length - 1){
@@ -269,24 +323,28 @@ function next(){
 
 setInterval(next, 3500);
 
-/* TOUCH SUPPORT */
-let startY = 0;
-
+/* TOUCH START */
 window.addEventListener("touchstart", (e) => {
+
     startY = e.touches[0].clientY;
+
     autoPaused = true;
+
     clearTimeout(autoPauseTimer);
+
 }, { passive:true });
 
+/* TOUCH END */
 window.addEventListener("touchend", (e) => {
 
-    let diff = e.changedTouches[0].clientY - startY;
+    let diff =
+        e.changedTouches[0].clientY - startY;
 
     if(Math.abs(diff) > 80){
 
         if(diff > 0){
             go(index - 1);
-        } else {
+        }else{
             go(index + 1);
         }
     }
@@ -294,13 +352,16 @@ window.addEventListener("touchend", (e) => {
     autoPauseTimer = setTimeout(() => {
         autoPaused = false;
     }, 2000);
+
 });
 
-/* restart on end */
+/* RESTART ON LAST CLICK */
 window.addEventListener("click", () => {
+
     if(index === reels.length - 1){
         go(0);
     }
+
 });
 
 </script>
